@@ -210,7 +210,7 @@ def main():
 			
 		if info_selection == "General Information": # Bulelani
 			# You can read a markdown file from supporting resources folder
-			info = open("resources\markdown\info.md").read()
+			info = open(r"resources\markdown\info.md").read()
 			st.markdown(info[0:1243])
 		
 			st.subheader("Raw Twitter data and label")
@@ -220,11 +220,11 @@ def main():
 				st.write(raw[['sentiment', 'message']]) # will write the df to the page
 
 		if info_selection == "Problem Statement": # Zanele
-			ps = open("resources\markdown\problem_statement.md").read()
+			ps = open(r"resources\markdown\problem_statement.md").read()
 			st.markdown(ps)
 
 		if info_selection == "Contributors": # Bulelani
-			cs = open("resources\markdown\contributors.md").read()
+			cs = open(r"resources\markdown\contributors.md").read()
 			st.markdown(cs)
 
 	##########################################################################################
