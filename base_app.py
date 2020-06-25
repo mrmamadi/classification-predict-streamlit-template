@@ -187,7 +187,7 @@ def main():
 	# you can create multiple pages this way
 	# Reorder the list to change the page order
 	options = ["Information", "EDA", "Insights", "Prediction"] # These are the four main pages
-	selection = st.sidebar.selectbox("Choose Option", options)
+	selection = st.sidebar.selectbox("Choose Page", options)
 ######################################################################################################
 ##################################-----------INFORMATION-PAGE-----------##############################
 ######################################################################################################
