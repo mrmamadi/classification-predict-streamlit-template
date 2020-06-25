@@ -70,8 +70,6 @@ tweet_cv = joblib.load(news_vectorizer) # loading your vectorizer from the pkl f
 
 # Load data
 raw = pd.read_csv("resources/datasets/train.csv")
-eda = pd.read_csv("resources/datasets/eda.csv", sep ='\t') # This must be removed, all functions must be placed in preprocecessing.py
-
 
 ######################################################################################################
 ##################################----------EVERYONE-END------------##################################
@@ -174,7 +172,7 @@ def featureCreation(df, uncommon = 10000, common = 20):
 
 	return feat_df
 
-eda_df = featureCreation(interactive)
+eda = featureCreation(interactive)
 
 # The main function where we will build the actual app
 def main():
@@ -217,6 +215,8 @@ def main():
 		
 			st.subheader("Raw Twitter data and label")
 			if st.checkbox('Show raw data'): # data is hidden if box is unchecked
+				st.write(raw[['sentiment', 'message']]) # will write the df to the page
+			if st.checkbox('Show clean data'): # data is hidden if box is unchecked
 				st.write(raw[['sentiment', 'message']]) # will write the df to the page
 
 		if info_selection == "Problem Statement": # Zanele
