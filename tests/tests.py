@@ -25,6 +25,6 @@ def test_preprocessing():
     assert p.lemmatizeTweet(['read', 'latest', 'on', 'climate', 'change', 'insurance', 'amp', 'lending', 'featuring', 'apra', 'speech', 'and', 'work', 'urlweb']) == ['read', 'latest', 'climate', 'change', 'insurance', 'lending', 'featuring', 'apra', 'speech', 'work', 'urlweb']
     assert p.topNWords(bag, n = 1) == ['change']
     assert p.removeInfrequentWords(bag,2) == ['change', 'climate']
-    assert p.removeCommonWords(['rt', 'climate', 'change', 'equation', 'screenshots', 'urlweb']) == ['equation']
+    assert p.removeCommonWords(['rt', 'climate', 'change', 'equation', 'screenshots', 'urlweb'], very_common_words) == ['equation']
     assert p.lengthOfTweet(['This', 'is', 'a' , 'tweet']) == 4
     assert p.getPolarityScores(['polyscimajor', 'chief', 'carbon', 'dioxide', 'main', 'cause', 'wait']) == {'neg': 0.0, 'neu': 1.0, 'pos': 0.0, 'compound': 0.0}
