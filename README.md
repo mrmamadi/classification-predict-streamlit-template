@@ -1,3 +1,38 @@
+# Classification Predict Streamlit app
+This library was created for Explore Data Science Academy's Classification Sprint.
+The contributors used this package to learn the following Data Science Skills:
+
+### Core Skills
+- Drafting a problem statement
+- Story Telling
+- Communication
+- Drafting Problem landscape
+- Databases
+- Data Engineering
+- Gathering Insights
+- Programming
+- Solution Governance
+- Performance Metrics
+- Project Management
+- Version Control
+- App deployment - Production
+
+### Software and Packages
+- Kaggle (Hackathon and Data Science Community)
+- Streamlit (Web app development)
+- Comet (Version control and experimentation)
+
+## Building this package locally
+`python setup.py sdist`
+
+## Installing this package from GitHub
+`pip install git+https://github.com/mrmamadi/classification-predict-streamlit-template.git`
+
+## updating this package from GitHub
+`pip install --upgrade git+/https://github.com/mrmamadi/classification-predict-streamlit-template.git`
+
+
+
 # Streamlit-based Web Application
 #### EXPLORE Data Science Academy Classification Predict
 
