@@ -172,7 +172,7 @@ def featureCreation(df, uncommon = 10000, common = 20):
 
 	return feat_df
 
-eda = featureCreation(interactive)
+# eda = featureCreation(interactive)
 
 # The main function where we will build the actual app
 def main():
@@ -205,19 +205,22 @@ def main():
 	
 	### Building out the "Information" page
 	if selection == "Information":
-		info_options = ["General Information", "Problem Statement", "Contributors"]
+		
+		### Building "Information" sub pages
+		info_options = ["General Information", "Problem Landscape", "Contributors"]
 		info_selection = st.selectbox("",info_options)
 			
 		if info_selection == "General Information": # Bulelani
 			# You can read a markdown file from supporting resources folder
 			info = open("resources\markdown\info.md").read()
+			st.image("resources\imgs\EDSA_logo.png")
 			st.markdown(info[0:1243])
 		
 			st.subheader("Raw Twitter data and label")
 			if st.checkbox('Show raw data'): # data is hidden if box is unchecked
 				st.write(raw[['sentiment', 'message']]) # will write the df to the page
 
-		if info_selection == "Problem Statement": # Zanele
+		if info_selection == "Problem Landscape": # Zanele
 			ps = open("resources\markdown\problem_statement.md").read()
 			st.markdown(ps)
 
