@@ -31,6 +31,12 @@ nltk.download('stopwords')
 # !python -m spacy download en_core_web_md
 
 # Data Cleaning
+def typeConvert(df):
+    if 'sentiment' in df.columns:
+        df['sentiment'] = df['sentiment'].astype('category')
+    df['tweetid'] = df['tweetid'].astype('int16')
+    return df
+
 def findURLs(tweet):
     """
     return a string of all urls in a text
