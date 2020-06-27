@@ -122,9 +122,9 @@ def getOrder(class_words, df):
     anti_spec_words = list(set(class_words['Anti']) - set(class_words['Pro']).union(set(class_words['Neutral'])).union(set(class_words['News'])))
     news_spec_words = list(set(class_words['News']) - set(class_words['Pro']).union(set(class_words['Neutral'])).union(set(class_words['Anti'])))
 
-    label_specific_words = dict(
-        Pro = pro_spec_words, Neutral = neutral_spec_words, Anti = anti_spec_words, News = news_spec_words
-        )
+    # label_specific_words = dict(
+    #     Pro = pro_spec_words, Neutral = neutral_spec_words, Anti = anti_spec_words, News = news_spec_words
+    #     )
     vocab = getVocab(df)
 
     class_specific_words = pro_spec_words + neutral_spec_words + anti_spec_words + news_spec_words
@@ -358,10 +358,10 @@ def plotScatter(x, y, df, title):
     
     # add annotations one by one with a loop
     for line in range(0,df.shape[0]):
-        g.text(df[x][line], df[y][line], df['target'][line], 
+        plt.text(df[x][line], df[y][line], df['target'][line], 
                 horizontalalignment='left', size='large', color='black')
     
-    return g
+    plt.show()
 
 def plotAltScatter(df, X = 'compound', y_ = 'polarity', title_ = 'Compound Vs Polarity\n'):
     data = df.groupby('target')[['negative', 'positive', 'neutral', 'compound', 'polarity', 'subjectivity']].mean().reset_index()
@@ -389,8 +389,8 @@ def histPlot(df):
 
 def polCompNeutralPlot(df):
     # variables of columns from dataframe that are conditioned to zero
-    polarity_mask = df['polarity'] == 0
-    compound_mask = df['compound'] == 0
+    # polarity_mask = df['polarity'] == 0
+    # compound_mask = df['compound'] == 0
 
     #plotting histigram and line on it
     sum_of_pol_and_comp = df['polarity'].add(df['compound'])
