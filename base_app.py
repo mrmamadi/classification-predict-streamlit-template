@@ -182,13 +182,8 @@ def featureCreation(df, uncommon = 10000, common = 20):
 # The main function where we will build the actual app
 def main():
 	"""Tweet Classifier App with Streamlit """
-
-	# Creates a main title and subheader on your page -
-	# these are static across all pages
-	st.image(r"resources\imgs\EDSA_logo.png", width=700)
-	st.title("Tweet Classifer")
-	st.subheader("Climate change belief classification")
-
+	# Creates side bare header image
+	
 	# Creating sidebar with selection box -
 	# you can create multiple pages this way
 	# Reorder the list to change the page order
@@ -198,11 +193,16 @@ def main():
 	### Building out the "Information" page
 	if selection == "Information":
 		info = open(r"resources\markdown\info.md").read()
+		width = 700
+
 		### Building "Information" sub pages
 		info_options = ["General Information", "Problem Landscape", "Contributors"]
 		info_selection = st.selectbox("",info_options)
 			
 		if info_selection == "General Information":
+			st.image(r"resources\imgs\base_app\info-banner1.jpg", use_column_width = True)
+			st.title("Tweet Classifer")
+			st.subheader("Climate change belief classification")
 			# You can read a markdown file from supporting resources folder
 			st.markdown(info[0:2290])
 			st.subheader("Raw Twitter data and label")
@@ -210,16 +210,16 @@ def main():
 				st.write(raw[['sentiment', 'message']])
 
 		if info_selection == "Problem Landscape":
+			st.image(r"resources\imgs\base_app\info-banner1.jpg", use_column_width = True)
 			ps = open(r"resources\markdown\problem_statement.md").read()
 			st.markdown(info[2300:])
-			
+		
 		if info_selection == "Contributors":
-
+# CREDITS
 			# Team Name
 			st.markdown(f"""### **The Blobs** - *classification-jhb-en2*
 			""")
-			st.image(r"resources\imgs\base_app\theblobs.png",
-			caption=None, width=None, use_column_width=True, channels='RGB', format='JPEG')
+			
 
 			# Team members
 			st.markdown(
@@ -519,7 +519,9 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
 ######################################################################################################
 ##################################----------INSIGHTS-PAGE-END-----------##############################
 ######################################################################################################
-
+	
+	st.sidebar.image(r"resources\imgs\base_app\theblobs.png", width=100)
+	st.sidebar.image(r"resources\imgs\EDSA_logo.png", width=225)
 # Required to let Streamlit instantiate our web app.  
 if __name__ == '__main__':
 	main()
