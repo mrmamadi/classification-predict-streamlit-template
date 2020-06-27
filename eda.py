@@ -12,6 +12,20 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from collections import Counter
+import re
+
+# Data visualization libraries
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# NLP libraries
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import TweetTokenizer
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+from nltk.stem.wordnet import WordNetLemmatizer
+from textblob import TextBlob
 
 # Import datasets
 train_data = pd.read_csv('/resources/datasets/train.csv')
@@ -58,6 +72,7 @@ def wordFrequencyDict(df = train_data, target='target', vocab = getVocab()):
         ('drug', 0.004),
          ('validated', 0.004)]
     """
+    data=df.copy()
     word_frequency_dict = {}
     for label in df[target].unique():
         data = df[df[target] == label]
@@ -320,6 +335,7 @@ def violinPlots(data=train_data, target = 'target'):
         else:
             g.set_ylabel(' ')
         g.set_xlabel(' ')
+    plt.show()
 
 def plotScatter(x, y, df, title):
     """
