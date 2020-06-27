@@ -183,6 +183,7 @@ def main():
 
 	# Creates a main title and subheader on your page -
 	# these are static across all pages
+	st.image(r"resources\imgs\EDSA_logo.png", width=700)
 	st.title("Tweet Classifer")
 	st.subheader("Climate change belief classification")
 
@@ -209,27 +210,24 @@ def main():
 	
 	### Building out the "Information" page
 	if selection == "Information":
-		
+		info = open(r"resources\markdown\info.md").read()
 		### Building "Information" sub pages
 		info_options = ["General Information", "Problem Landscape", "Contributors"]
 		info_selection = st.selectbox("",info_options)
 			
 		if info_selection == "General Information": # Bulelani
 			# You can read a markdown file from supporting resources folder
-			info = open("resources\markdown\info.md").read()
-			st.image("resources\imgs\EDSA_logo.png")
-			st.markdown(info[0:1243])
-		
+			st.markdown(info[0:2290])
 			st.subheader("Raw Twitter data and label")
 			if st.checkbox('Show raw data'): # data is hidden if box is unchecked
 				st.write(raw[['sentiment', 'message']]) # will write the df to the page
 
 		if info_selection == "Problem Landscape": # Zanele
-			ps = open("resources\markdown\problem_statement.md").read()
-			st.markdown(ps)
-
+			ps = open(r"resources\markdown\problem_statement.md").read()
+			st.markdown(info[2300:])
+			
 		if info_selection == "Contributors": # Bulelani
-			cs = open("resources\markdown\contributors.md").read()
+			cs = open(r"resources\markdown\contributors.md").read()
 			st.markdown(cs)
 
 	##########################################################################################
