@@ -26,16 +26,6 @@ __message:__ Tweet body
 
 __tweetid:__  Unique tweet id
 
-# Introduction
-
-## Context 
-Many companies are built around lessening one’s environmental impact or carbon footprint. They offer products and services that are environmentally friendly and sustainable, in line with their values and ideals. They would like to determine how people perceive climate change and whether or not they believe it is a real threat. This would add to their market research efforts in gauging how their product/service may be received.
-
-## Problem statement
-With this context, EDSA is challenging you during the Classification Sprint with the task of creating a Machine Learning model that is able to classify whether or not a person believes in climate change, based on their novel tweet data.
-
-Providing an accurate and robust solution to this task gives companies access to a broad base of consumer sentiment, spanning multiple demographic and geographic categories - thus increasing their insights and informing future marketing strategies.
-
 ## Objective
 - __Competition:__ [Climate Change Belief Analysis](https://www.kaggle.com/c/climate-change-belief-analysis)
 - __Determine:__ How the public perceives climate change and wheter or not they believe it is a threat
@@ -53,3 +43,19 @@ The traditional f1-score is the harmonic mean between precision and recall:
 The F1 Scores are calculated for each label (`2`, `1`, `0`, `-1`) and then their average is weighted by support - being the number of true instances for each label. In other words, the f1-score for each label is weighted based on it's proportion of TN and TP in the  sample.
 
 Just like the f1-score, the weighted f1 score will be a number between 0 and 1 where perfect precision and recall occurs at 1.
+
+##########
+
+### Context
+Many companies are built around lessening their environmental impact or carbon footprint. They offer products and services that are environmentally friendly and sustainable, in line with their values and ideals. They would like to determine how people perceive climate change and whether or not they believe it is a real threat. This would add to their market research efforts in gauging how their product/service may be received.
+
+### Problem statement
+With this context, EDSA is challenging you during the Classification Sprint with the task of creating a Machine Learning model that is able to classify whether or not a person believes in climate change, based on their novel tweet data.
+
+Providing an accurate and robust solution to this task gives companies access to a broad base of consumer sentiment, spanning multiple demographic and geographic categories - thus increasing their insights and informing future marketing strategies.
+ 
+To meet the problem statement we must:
+- **Train** a *Classification model* to predict the sentiment of Tweets related to climate change.
+- **Build** an app using *Streamlit*.
+- **Host** the app on an *AWS EC2* instance.
+- **Present** solution via *Video conference* presentation.
