@@ -53,6 +53,7 @@ import joblib,os
 
 # Data dependencies
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -91,6 +92,7 @@ def prepareData(df):
 		prep_df (DataFrame): cleaned DataFrame
 	"""
 	prep_df = df.copy()
+	prep_df = prep.typeConvert(prep_df)
 	prep_df['urls'] = prep_df['message'].map(prep.findURLs)
 	prep_df = prep.strip_url(prep_df)
 	prep_df['handles'] = prep_df['message'].map(prep.findHandles)
@@ -192,22 +194,7 @@ def main():
 	# Reorder the list to change the page order
 	options = ["Information", "EDA", "Insights", "Prediction"] # These are the four main pages
 	selection = st.sidebar.selectbox("Choose Page", options)
-######################################################################################################
-##################################-----------INFORMATION-PAGE-----------##############################
-######################################################################################################
 
-	### DEADLINE: 26/06/2020 - Friday
-
-	### ISSUES use: git commit -m "Description. Fixes issue x" : Where "x" is the issue number
-	### 3. Complete "General Information"
-	### 4. Complete "Problem Statement"
-	### 5. Complete "Contributors"
-	### 99. Demonstrate to Zanele
-	
-	##########################################################################################
-	############################-----------BULELANI-ZANELE------------########################
-	##########################################################################################	
-	
 	### Building out the "Information" page
 	if selection == "Information":
 		info = open(r"resources\markdown\info.md").read()
@@ -215,31 +202,60 @@ def main():
 		info_options = ["General Information", "Problem Landscape", "Contributors"]
 		info_selection = st.selectbox("",info_options)
 			
-		if info_selection == "General Information": # Bulelani
+		if info_selection == "General Information":
 			# You can read a markdown file from supporting resources folder
 			st.markdown(info[0:2290])
 			st.subheader("Raw Twitter data and label")
-			if st.checkbox('Show raw data'): # data is hidden if box is unchecked
-				st.write(raw[['sentiment', 'message']]) # will write the df to the page
+			if st.checkbox('Show raw data'):
+				st.write(raw[['sentiment', 'message']])
 
-		if info_selection == "Problem Landscape": # Zanele
+		if info_selection == "Problem Landscape":
 			ps = open(r"resources\markdown\problem_statement.md").read()
 			st.markdown(info[2300:])
 			
-		if info_selection == "Contributors": # Bulelani
-			cs = open(r"resources\markdown\contributors.md").read()
-			st.markdown(cs)
+		if info_selection == "Contributors":
 
-	##########################################################################################
-	############################---------BULELANI-ZANELE-END----------########################
-	##########################################################################################
+			# Team Name
+			st.markdown(f"""### **The Blobs** - *classification-jhb-en2*
+			""")
+			st.image(r"resources\imgs\base_app\theblobs.png",
+			caption=None, width=None, use_column_width=True, channels='RGB', format='JPEG')
 
-	### Delete instruction comments when done
-######################################################################################################
-##################################---------INFORMATION-PAGE-END---------##############################
-######################################################################################################
+			# Team members
+			st.markdown(
+f"""#### <a href="https://github.com/titusndondo">Titus Ndondo</a>
+			""",unsafe_allow_html=True)
+			st.image(r"resources\imgs\base_app\contributor3.jpg", width=128)
+			
+			st.markdown(
+f"""#### <a href="https://github.com/Rirhandzu95">Rirhandzu Mahlaule</a>
+			""",unsafe_allow_html=True)
+			st.image(r"resources\imgs\base_app\contributor4.jpg", width=128)
 
-#====================================================================================================#
+			st.markdown(
+f"""#### <a href="https://github.com/mrmamadi">Kgaogelo Mamadi</a>
+			""",unsafe_allow_html=True)
+			st.image(r"resources\imgs\base_app\theblobs.png", width=128)
+
+			st.markdown(
+f"""#### <a href="https://github.com/Martwuene">Stanley Machuene Kobo</a>
+			""",unsafe_allow_html=True)
+			st.image(r"resources\imgs\base_app\contributor6.jpeg", width=128)
+
+			st.markdown(
+f"""#### <a href="https://github.com/Zaneleg">Zanele Gwamanda</a>
+			""",unsafe_allow_html=True)
+			st.image(r"resources\imgs\base_app\contributor7.jpeg", width=128)
+			# st.image
+			st.markdown(
+f"""#### <a href="https://github.com/BNkosi">Bulelani Nkosi</a>
+			""",unsafe_allow_html=True)
+			st.image(r"resources\imgs\base_app\contributor2.jpg", width=128)
+			
+			st.markdown(
+f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Ebrahim Noormahomed</a> - Supervisor
+			""",unsafe_allow_html=True)
+			st.image(r"resources\imgs\base_app\contributor1.jpg", width=128)
 
 ######################################################################################################
 ##################################------------PREDICTION-PAGE-----------##############################
@@ -337,6 +353,8 @@ def main():
 
 	# Building out the "EDA" page
 	if selection == "EDA":
+		# Preparing data
+		eda = prep.typeConvert(train_data)
 		target_map = {-1:'Anti', 0:'Neutral', 1:'Pro', 2:'News'}
 		eda['target'] = eda['sentiment'].map(target_map)
 
