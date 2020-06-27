@@ -1,5 +1,6 @@
 from . import base_app
 from . import preprocessing as p
+from . import eda
 
 def test_preprocessing():
     """
