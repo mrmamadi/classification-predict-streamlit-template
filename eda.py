@@ -353,7 +353,7 @@ def plotScatter(x, y, df, title):
     
     """
     plt.figure(figsize = (8, 5))
-    sns.scatterplot(data = df, x = x, y = y, hue = 'target', legend = False, palette = {'Pro':'#CCCC00', 'News':'teal', 'Neutral':'teal', 'Anti':'teal'})
+    sns.scatterplot(df = df, x = x, y = y, hue = 'target', legend = False, palette = {'Pro':'#CCCC00', 'News':'teal', 'Neutral':'teal', 'Anti':'teal'})
     plt.title(title, fontsize = 20)
     
     # add annotations one by one with a loop
