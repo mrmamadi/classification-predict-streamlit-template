@@ -335,32 +335,32 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
 ######################################################################################################
 ##################################----------------EDA-PAGE--------------##############################
 ######################################################################################################
-	
-	### DEADLINE: 28/06/2020 - Sunday
-	### Delete an issue after committing please
-	
-	### ISSUES use: git commit -m "Description. Fixes issue x" : Where "x" is the issue number
-	### 13. Add all images for visuals to the resources\imgs\base_app folder
-	### 14. Add all markdown to eda.md in the resources\markdown folder
-	### 15. Display static images for visualizations that will not change no matter how you play with it
-	###		Wordclouds should remain static
-	### 16. Write the code for interactive or otherwise creative ways to display the visuals
-	### 17. Include markdown in appropriate areas
-	
-	##########################################################################################
-	############################------------TITUS-STANLEY-------------########################
-	##########################################################################################
+
 
 	# Building out the "EDA" page
 	if selection == "EDA":
+		# Create a new Page
+		eda_sections = ["Word Frequencies", "Text Analysis", "Sentiment Analysis"]
+		eda_section = st.selectbox("", eda_sections) # if eda_section == "xxx":
 		st.write('add stuff here')
+		
+		# Data preperation (Do not build complex functions, consider only using functions on the page you need them)
 
-	##########################################################################################
-	############################----------TITUS-STANLEY-END-----------########################
-	##########################################################################################
+		# Building the Word Frequencies page
+		if eda_section == "Word Frequencies":
 
-	### Zanele and Bulelani review and finalize
-	### Delete instruction comments when done
+		# Building the Text Analysis Page
+		if eda_section == "Test Analysis":
+		
+		# Building the Sentiment Analysis Page
+		if eda_section == "Sentiment Analysis":
+
+# TASKS:
+# 1. Build out the Word  Frequencies Page
+# 2. Visualize the top n words per sentiment
+# 3. Write some eda about it
+# 4. Build Text Analysis page
+# 5. 
 ######################################################################################################
 ##################################-------------EDA-PAGE-END-------------##############################
 ######################################################################################################
@@ -375,145 +375,27 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
 	############################-----------BULELANI-ZANELE------------########################
 	##########################################################################################
 
-	### DEADLINE: 28/06/2020 - Sunday
-	### Delete an issue after committing.
-	
-	### ISSUES use: git commit -m "Description. Fixes issue x" : Where "x" is the issue number
-	### 18. Complete interactive wordcloud - Last commit
-	### 19. General wordcloud
-	### 20. Pro wordcloud
-	### 21. Neutral wordcloud
-	### 22. Anti wordcloud
-	### 23. NER wordclouds
-	### 24. Handles wordcloud
-	### 25. Hashtags wordcloud
-
-	# Building out the "Insights" page
+	# Building the insights page
 	if selection == "Insights":
-		insight_df = pd.read_csv("resources/datasets/interactive.csv", sep ='\t')
-		st.info("Insights from Word Clouds")
+		# Import data
+		ins_data = interactive.copy()
+		st.write(ins_data)
+		 
+		# Feature Engineering
 		
-		# Building vocabulary
-		vocab = list()
-		ignore = ['rt', 'urlweb', 'htt', 'ht','pron','amp','https','http','mr']
-		for tweet in insight_df['tweets']:
-			for token in tweet:
-				if token not in ignore:
-					vocab.append(token)
-	
-		
-		# Generate a list of the most common words
-		most_common_words = Counter(vocab).most_common()
-		n = st.sidebar.slider('Top n words to include in Wordcloud', min_value=100, max_value=13000, value=12000, step=500, format=None, key=None)
-		most_common = list()
-		for word in most_common_words[:n]:
-			most_common.append(word[0])
-
-		def removeInfrequentWords(tweet):
-			pre_proc_tweet = list()
-			for token in tweet:
-				if token in most_common:
-					pre_proc_tweet.append(token)
-			return pre_proc_tweet
-
-		insight_df['tweets'] = insight_df['tweets'].map(removeInfrequentWords)
-
-		target_map = {-1:'Anti', 0:'Neutral', 1:'Pro', 2:'News'}
-		insight_df['target'] = insight_df['sentiment'].map(target_map)
-
-		def getPolarityScores(tweet):
-			tweet = ' '.join(tweet)
-			sid = SentimentIntensityAnalyzer()
-			scores = sid.polarity_scores(tweet)
-			return scores
-
-		nltk_scores = dict(compound = list(), negative = list(), neutral = list(), positive = list())
-		for tweet in insight_df['tweets']:
-			output = getPolarityScores(tweet)
-			nltk_scores['compound'].append(output['compound'])
-			nltk_scores['negative'].append(output['neg'])
-			nltk_scores['neutral'].append(output['neu'])
-			nltk_scores['positive'].append(output['pos'])
-
-		if 'compound' in insight_df.columns:
-			insight_df.drop(['compound', 'negative', 'neutral', 'positive'], axis = 1, inplace = True)
-			insight_dfe = pd.concat([insight_df, pd.DataFrame(nltk_scores)], axis = 1)
-		else:
-			insight_df = pd.concat([insight_df, pd.DataFrame(nltk_scores)], axis = 1)
-
-		sentiment_scores = [TextBlob(tweet).sentiment for tweet in insight_df['message']]
-
-		pol = list()
-		subj = list()
-		for scores in sentiment_scores:
-			pol.append(scores.polarity)
-			subj.append(scores.subjectivity)
-
-		insight_df['polarity'] = pol
-		insight_df['subjectivity'] = subj
-
-
-		
-		# Create selections for each class
-		insight_options = ["Overview", "News", "Pro", "Neutral", "Anti"]
-		insights = st.sidebar.selectbox("Choose Sentiment", insight_options)
-
-		# Most Common
-		hundred_most_common_words_count = Counter(vocab).most_common(50)
-		hundred_most_common_words = list()
-		for word in hundred_most_common_words_count:
-			token = word[0]
-			hundred_most_common_words.append(token)
-		st.write(hundred_most_common_words)
-		# Creating sliders for sentiment tuning
-		neg_upper = st.sidebar.slider('Negative Sentiment Upper Bound', min_value=-1.0, max_value=0.0, value=-0.2, step=0.01)
-		pos_lower = st.sidebar.slider('Positive Sentiment Lower Bound', min_value=0.0, max_value=1.0, value=0.2, step=0.01)
-		
-		
-		if insights == "Overview":			
-			# Plotting Compound = Neutral
-			data = insight_df[(insight_df['compound'] > -neg_upper) & (insight_df['compound'] < pos_lower)]
-			
-			# Building word list
-			words = list()
-			for tweet in data['tweets']:
-				for token in tweet:
-					if token not in hundred_most_common_words:
-						words.append(token)
-			words = ' '.join(words)
-
-			wordcloud = WordCloud(contour_width=3, contour_color='steelblue').generate(words)
-
-			# Display the generated image:
-			plt.imshow(wordcloud, interpolation='bilinear')
-			plt.axis("off")
-			plt.margins(x=0, y=0)
-			st.pyplot()
-
-			# st.write(data)
-			cloud = plotWordCloud(data)
-			st.pyplot()
-			# print('Sentiment = Negative')
-			# data = eda[eda['compound'] < neg_upper]
-			# plotWordCloud(data)
-
-			# print('Sentiment = Positive')
-			# data = eda[eda['compound'] > pos_lower]
-			# plotWordCloud(data)
-
-		elif insights == "News":
-			st.write('graph here')
-		elif insights == "Pro":
-			st.write('graph here')
-		elif insights == "Neutral":
-			st.write('graph here')
-		else:
-			st.write('graph here')
 
 	##########################################################################################
 	############################---------BULELANI-ZANELE-END----------########################
 	##########################################################################################
-
+	## What was done to prep_df
+	# 	prep_df = df.copy()
+	# prep_df = prep.typeConvert(prep_df)
+	# prep_df['urls'] = prep_df['message'].map(prep.findURLs)
+	# prep_df = prep.strip_url(prep_df)
+	# prep_df['handles'] = prep_df['message'].map(prep.findHandles)
+	# prep_df['hash_tags'] = prep_df['message'].map(prep.findHashTags)
+	# prep_df['tweets'] = prep_df['message'].map(prep.removePunctuation)
+	# return prep_df
 	### Zanele and Bulelani review and finalize
 	### Delete instruction comments when done
 ######################################################################################################
