@@ -58,6 +58,7 @@ import seaborn as sns
 
 # Data Cleaning
 import preprocessing as prep
+import eda
 
 # Data analysis
 from collections import Counter
