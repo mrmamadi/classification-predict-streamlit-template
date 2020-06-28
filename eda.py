@@ -222,7 +222,7 @@ def plotCounts(df):
     plt.xlabel('\nSentiment')
     plt.ylabel('Count\n')
     plt.show()
-def plotWordCloud(data, label):
+def plotWordCloud(data, label, column):
     """
     the plot of the most common use of words that appear bigger than words that
     appear infrequent in a text document by each sentiment
@@ -241,7 +241,7 @@ def plotWordCloud(data, label):
         plotWordCloud(data, label = 'Sentiment = Pro')
     """
     words = list()
-    for tweet in data['tweets_clean']:
+    for tweet in data[column]:
         for token in tweet:
             words.append(token)
     words = ' '.join(words)
@@ -253,24 +253,10 @@ def plotWordCloud(data, label):
         font_path=None,
         margin=2,
         ranks_only=None,
-        mask=None,
-        scale=2,
         max_words=500,
-        min_font_size=4,
-        stopwords=None,
-        random_state=None,
         background_color='white',
-        max_font_size=None,
-        font_step=1,
-        relative_scaling='auto',
-        regexp=None,
-        collocations=True,
         colormap="magma_r", # magma_r,
-        normalize_plurals=True,
-        repeat=False,
-        include_numbers=True,
-        min_word_length=0,
-        collocation_threshold=30).generate(words)
+        include_numbers=True).generate(words)
 
     # Display the generated image:
     plt.figure(figsize = (10, 6))

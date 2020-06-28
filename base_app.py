@@ -362,21 +362,28 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
 			# st.write(over_data['tweets_clean'])
 			
 			# Plotting the general wordcloud
-			eda.plotWordCloud(data=over_data, label = "Overview")
+			eda.plotWordCloud(data=over_data, label = "Overview\n", column = 'tweets_clean')
 			st.pyplot()
 
 			# Plotting the general positive sentiments
-			n_3 = st.slider("Positive Threshhold", min_value = 0.0, max_value=1.0, step =0.1, value = 0.1)
+			n_3 = st.slider("Positive Threshhold", min_value = 0.0, max_value=0.95, step =0.05, value = 0.1)
 			data_pos_gen = over_data[over_data['compound'] > n_3]
-			eda.plotWordCloud(data=data_pos_gen, label = "Positive Sentiments")
+			eda.plotWordCloud(data=data_pos_gen, label = "Positive Sentiments\n", column = 'tweets_clean')
 			st.pyplot()
 
 			# Plotting the general  neutral sentiments
 			n_4 = st.slider("Neutral Lower Threshhold", min_value = -1.0, max_value=-0.05, step =0.05, value = -0.15)
 
-			data_pos_gen = over_data[(over_data['compound'] > n_4) & (over_data['compound'] < n_4*-2)]
-			eda.plotWordCloud(data=data_pos_gen, label = "Neutral Sentiments")
+			data_neu_gen = over_data[(over_data['compound'] > n_4) & (over_data['compound'] < n_4*-2)]
+			eda.plotWordCloud(data=data_neu_gen, label = "Neutral Sentiments\n", column = 'tweets_clean')
 			st.pyplot()
+
+			# Plotting the general negative sentiments
+			n_5 = st.slider("Negative Upper Threshold", min_value = -0.95, max_value = 0.0, step = 0.05, value = -0.60)
+			data_neg_gen = over_data[over_data['compound'] < n_5]
+			eda.plotWordCloud(data=data_neg_gen, label = "Neutral Sentiments\n", column = 'tweets_clean')
+			
+			# Plotting the 
 
 		if ins_page == "Neutral":
 			st.write("""# BLANK""")
