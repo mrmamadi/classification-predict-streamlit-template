@@ -104,16 +104,18 @@ def prepareData(df):
 
 	return prep_df
 
-interactive = prepareData(raw)
+
 
 # Feature Engineering
-@st.cache
+@st.cache(allow_output_mutation=True)
 def feat_engine(df):
 	feat = df.copy()
 	feat['tweets'] = feat['tweets'].map(prep.tweetTokenizer)
 	feat['tweets'] = feat['tweets'].map(prep.removeStopWords)
 	feat['tweets'] = feat['tweets'].map(prep.lemmatizeTweet)
 	return feat
+
+
 @st.cache(allow_output_mutation=True)
 def build_corpus(df):
 	corp_df = df.copy()
@@ -134,7 +136,7 @@ def main():
 	# Reorder the list to change the page order
 	options = ["Information", "EDA", "Insights", "Prediction"] # These are the four main pages
 	selection = st.sidebar.selectbox("Choose Page", options)
-
+	interactive = feat_engine(prepareData(raw))
 	### Building out the "Information" page
 	if selection == "Information":
 		info = open(r"resources/markdown/info.md").read()
@@ -326,7 +328,6 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
 		# Import data
 		ins_data = interactive.copy()
 		# Data 
-		ins_data = feat_engine(ins_data)
 			
 		ins_data, vocab, word_frequency_dict, class_words, pro_spec_words, neutral_spec_words, anti_spec_words, news_spec_words, label_specific_words,class_specific_words, ordered_words = build_corpus(ins_data)
 		

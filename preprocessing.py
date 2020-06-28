@@ -250,11 +250,8 @@ def lemmatizeTweet(tweet):
              'work',
              'urlweb']
     """
-    lemmatized_tweet = list()
     lmtzr = WordNetLemmatizer()
-    for token in tweet:
-        lemmatized_tweet.append(lmtzr.lemmatize(token))
-        
+    lemmatized_tweet = lmtzr.lemmatize(' '.join(tweet))        
     return lemmatized_tweet
 def topNWords(bag, n = 10000):
     """
