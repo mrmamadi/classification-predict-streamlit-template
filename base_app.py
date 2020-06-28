@@ -241,7 +241,7 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
 
         # Creating a selection box to choose different models
         models = ['Support Vector','Logistic Regression', 'Nearest Neighbours',
-         'AdaBoost', 'Naive Bayes', 'Decision Tree', 'Random Forest']
+         'AdaBoost', 'Naive Bayes', 'Decision Tree']
         classifiers = st.selectbox("Choose a classifier", models)
 
         # Creating a text box for user input
@@ -283,9 +283,9 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
                 predictor = joblib.load(open(os.path.join("resources/decision_tree.pkl"),"rb"))
                 prediction = predictor.predict(tweet)
 
-            elif classifiers == 'Random Forest':
-                predictor = joblib.load(open(os.path.join("resources/random_forest.pkl"),"rb"))
-                prediction = predictor.predict(tweet)
+            # elif classifiers == 'Random Forest':
+            #     predictor = joblib.load(open(os.path.join("resources/random_forest.pkl"),"rb"))
+            #     prediction = predictor.predict(tweet)
             # When model has successfully run, will print prediction
             # You can use a dictionary or similar structure to make this output
             # more human interpretable.
