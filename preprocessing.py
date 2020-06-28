@@ -73,7 +73,7 @@ def strip_url(df):
             |0    |-1       |urlweb |13442
     """
     clean_df = df.copy()
-    pattern_url = r'http[s]?://(?:[A-Za-z]|[0-9]|[$-@.&+]|[!*(),]|(?:%[0-9A-Fa-f][0-9A-Fa-f]))+'
+    pattern_url = r'ht[t]?[p]?[s]?://(?:[A-Za-z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9A-Fa-f][0-9A-Fa-f]))+'
     subs_url = r'urlweb'
     clean_df['message'] = clean_df['message'].replace(to_replace = pattern_url, value = subs_url, regex = True)
     return clean_df
@@ -206,17 +206,12 @@ def removeStopWords(tokenized_tweet):
              'work',
              'urlweb']
     """
-    clean_tweet = list() # initialising an empty list as container for the cleaned tweet
-    for token in tokenized_tweet:  # iterating through all words in a list
-        # checking if current word is not a stopword
-        if token not in stopwords.words('english') + ['amp','rt','urlweb']:
-            # also checking if the current word is a hash_tag
-            if token.startswith('#') == False:
-                # also checking if the current word has more than one character
-                if len(token) > 1:
-                    # if all condition are satisfied, keep the word
-                    clean_tweet.append(token)
-                    
+    clean_tweet = list()
+    # iterating through all words in a list
+    for token in tokenized_tweet:
+        # checking if current word is not a stopword # also checking if the current word is a hash_tag # also checking if the current word has more than one character
+        if token not in stopwords.words('english') + ['amp','rt'] and token.startswith('#') == False and len(token) > 1:
+            clean_tweet.append(token)            
     # return the cleaner tweet
     return clean_tweet
 def lemmatizeTweet(tweet):
