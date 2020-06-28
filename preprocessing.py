@@ -163,7 +163,7 @@ def tweetTokenizer(tweet):
              'work',
              'urlweb']
     """
-    tokenizer = TweetTokenizer(preserve_case = False, strip_handles = False)
+    tokenizer = TweetTokenizer(preserve_case = False, strip_handles = True)
     tokenized_tweet = tokenizer.tokenize(tweet)
     return tokenized_tweet
 def removeStopWords(tokenized_tweet):
