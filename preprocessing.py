@@ -5,7 +5,11 @@
     Author: JHB-EN2.
 
     Description: These helper functions are to be used to clean data for predictions
+<<<<<<< HEAD
     and EDA
+=======
+    and EDA 
+>>>>>>> 8f2e5bd563a292ca5be163f0d7576aced6947596
 
 """
 import pandas as pd
@@ -211,7 +215,11 @@ def removeStopWords(tokenized_tweet):
     for token in tokenized_tweet:
         # checking if current word is not a stopword # also checking if the current word is a hash_tag # also checking if the current word has more than one character
         if token not in stopwords.words('english') + ['amp','rt'] and token.startswith('#') == False and len(token) > 1:
+<<<<<<< HEAD
             clean_tweet.append(token)
+=======
+            clean_tweet.append(token)            
+>>>>>>> 8f2e5bd563a292ca5be163f0d7576aced6947596
     # return the cleaner tweet
     return clean_tweet
 def lemmatizeTweet(tweet):
@@ -222,7 +230,11 @@ def lemmatizeTweet(tweet):
         tweet (list): tokens to be lemmatized
     Returns
     -------
+<<<<<<< HEAD
         lemmatized_tweet (list): lemmatized list of tokens
+=======
+        lemmatized_tweet (list): lemmatized list of tokens 
+>>>>>>> 8f2e5bd563a292ca5be163f0d7576aced6947596
     Examples
         >>> lemmatizeTweet(['read',
                             'latest',
@@ -254,7 +266,11 @@ def lemmatizeTweet(tweet):
     lmtzr = WordNetLemmatizer()
     for token in tweet:
         lemmatized_tweet.append(lmtzr.lemmatize(token))
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> 8f2e5bd563a292ca5be163f0d7576aced6947596
     return lemmatized_tweet
 def topNWords(bag, n = 10000):
     """
@@ -301,7 +317,11 @@ def removeInfrequentWords(tweet, top_n_words):
                             ('urlweb', 9656),
                             ('global', 3773)],
         >>> removeInfrequentWords(['rt', 'climate', 'change', 'equation', 'screenshots', 'urlweb'],2)
+<<<<<<< HEAD
             ['change', 'climate']
+=======
+            ['change', 'climate']    
+>>>>>>> 8f2e5bd563a292ca5be163f0d7576aced6947596
 
     """
     filt_tweet = list()
@@ -362,4 +382,8 @@ def getPolarityScores(tweet):
     tweet = ' '.join(tweet)
     sid = SentimentIntensityAnalyzer()
     scores = sid.polarity_scores(tweet)
+<<<<<<< HEAD
     return scores
+=======
+    return scores
+>>>>>>> 8f2e5bd563a292ca5be163f0d7576aced6947596
