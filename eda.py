@@ -247,7 +247,34 @@ def plotWordCloud(data, label):
     words = ' '.join(words)
 
     from wordcloud import WordCloud
-    wordcloud = WordCloud(contour_width=3, contour_color='steelblue').generate(words)
+    wordcloud = WordCloud(
+        contour_width=3,
+        contour_color='steelblue',
+        font_path=None,
+        width=400,
+        height=200,
+        margin=2,
+        ranks_only=None,
+        prefer_horizontal=0.9,
+        mask=None,
+        scale=1,
+        color_func=None,
+        max_words=200,
+        min_font_size=4,
+        stopwords=None,
+        random_state=None,
+        background_color='white',
+        max_font_size=None,
+        font_step=1, mode='RGB',
+        relative_scaling='auto',
+        regexp=None,
+        collocations=True,
+        colormap=None,
+        normalize_plurals=True,
+        repeat=False,
+        include_numbers=False,
+        min_word_length=0,
+        collocation_threshold=30).generate(words)
 
     # Display the generated image:
     plt.figure(figsize = (10, 6))

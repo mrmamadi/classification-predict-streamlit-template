@@ -69,13 +69,14 @@ from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from textblob import TextBlob
 
 # Vectorizer - ADD A SECOND VECTORIZER (MELVA/KGAOGELO)
-news_vectorizer = open("resources/tfidfvect.pkl","rb")
+news_vectorizer = open(r"resources/tfidfvect.pkl","rb")
 tweet_cv = joblib.load(news_vectorizer) # loading your vectorizer from the pkl file
 
 # Load data
 raw = pd.read_csv("resources/datasets/train.csv")
 
-######################################################################################################
+#####################################################git 
+# #################################################
 ##################################----------EVERYONE-END------------##################################
 ######################################################################################################
 
@@ -136,7 +137,7 @@ def main():
 
 	### Building out the "Information" page
 	if selection == "Information":
-		info = open(r"resources\markdown\info.md").read()
+		info = open(r"resources/markdown/info.md").read()
 		width = 700
 
 		### Building "Information" sub pages
@@ -334,7 +335,10 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
 		
 		# Building out Instructions Page
 		if ins_page == "Instructions":
-			st.write(f""" 1. `Filter` your wordcloud's vocabulary by `word frequency`
+			st.write(f"""
+1. `Filter` your wordcloud's vocabulary by `word frequency`. This step will make the smaller words more relevant
+2. `Filre
+
 """)
 		
 		# Building out the Overview page
@@ -369,7 +373,7 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
 			# Plotting the general positive sentiments
 
 			data_pos_gen = over_data[over_data['compound'] > 0.25]
-			eda.plotWordCloud(data=data_pos_gen, label = "Overview")
+			eda.plotWordCloud(data=data_pos_gen, label = "Positive Sentiments")
 			st.pyplot()
 
 		if ins_page == "Neutral":
