@@ -222,31 +222,32 @@ def main():
 			
 
 			# Team members
+# Titus
 			st.markdown(
 f"""#### <a href="https://github.com/titusndondo">Titus Ndondo</a>
 			""",unsafe_allow_html=True)
 			st.image(r"resources\imgs\base_app\contributor3.jpg", width=128)
-			
+# Rirhandzu
 			st.markdown(
 f"""#### <a href="https://github.com/Rirhandzu95">Rirhandzu Mahlaule</a>
 			""",unsafe_allow_html=True)
 			st.image(r"resources\imgs\base_app\contributor4.jpg", width=128)
-
+# Kgaogelo
 			st.markdown(
 f"""#### <a href="https://github.com/mrmamadi">Kgaogelo Mamadi</a>
 			""",unsafe_allow_html=True)
 			st.image(r"resources\imgs\base_app\theblobs.png", width=128)
-
+# Stanley
 			st.markdown(
 f"""#### <a href="https://github.com/Martwuene">Stanley Machuene Kobo</a>
 			""",unsafe_allow_html=True)
 			st.image(r"resources\imgs\base_app\contributor6.jpeg", width=128)
-
+# Zanele
 			st.markdown(
 f"""#### <a href="https://github.com/Zaneleg">Zanele Gwamanda</a>
 			""",unsafe_allow_html=True)
 			st.image(r"resources\imgs\base_app\contributor7.jpeg", width=128)
-			# st.image
+# Bulelani
 			st.markdown(
 f"""#### <a href="https://github.com/BNkosi">Bulelani Nkosi</a>
 			""",unsafe_allow_html=True)
@@ -348,13 +349,13 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
 
 		# Building the Word Frequencies page
 		if eda_section == "Word Frequencies":
-
+			st.write("fill eda")
 		# Building the Text Analysis Page
-		if eda_section == "Test Analysis":
-		
+		if eda_section == "Text Analysis":
+			st.write("fill eda")
 		# Building the Sentiment Analysis Page
 		if eda_section == "Sentiment Analysis":
-
+			st.write("fill eda")
 # TASKS:
 # 1. Build out the Word  Frequencies Page
 # 2. Visualize the top n words per sentiment
@@ -379,11 +380,10 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
 	if selection == "Insights":
 		# Import data
 		ins_data = interactive.copy()
-		st.write(ins_data)
-		 
 		# Feature Engineering
+		vocab = eda.getVocab(ins_data['tweet_clean'])
 		
-
+		
 	##########################################################################################
 	############################---------BULELANI-ZANELE-END----------########################
 	##########################################################################################
