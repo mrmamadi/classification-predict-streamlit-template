@@ -285,25 +285,7 @@ def getPolarityScores(tweet):
     # return the polarity scores
     return scores
 def applyScores(data):
-    nltk_scores = dict(compound = list(), negative = list(), neutral = list(), positive = list())
-    for tweet in data['tweets']:
-        output = getPolarityScores(tweet)
-        nltk_scores['compound'].append(output['compound'])
-        nltk_scores['negative'].append(output['neg'])
-        nltk_scores['neutral'].append(output['neu'])
-        nltk_scores['positive'].append(output['pos'])
-
-    # concatenate the output from above into the main dataset
-    if 'compound' in data.columns:
-    
-        # drop the columns if this has been executed before
-        data.drop(['compound', 'negative', 'neutral', 'positive'], axis = 1, inplace = True)
-    
-        # concatenate a DataFrame version of the nltk_scores dictionary
-        data = pd.concat([data, pd.DataFrame(nltk_scores)], axis = 1)
-    else:
-        # concatenate directly if this is the first execution
-        data = pd.concat([data, pd.DataFrame(nltk_scores)], axis = 1)
+    data['compound'] = data['tweets'].map(lambda tweet: SentimentIntensityAnalyzer().polarity_scores(' '.join(tweet))['compound'])
     return data
 def getPolaritySubjectivity(data):
     sentiment_scores = [TextBlob(' '.join(tweet)).sentiment for tweet in data['tweets_clean']]
@@ -372,7 +354,7 @@ def arrowScatter(df):
     plt.show()
 def histPlot(df):
     columns = ['polarity', 'compound']
-    fig, axes = plt.subplots(1, len(columns), figsize = (18, 5), sharey = True)
+    axes = plt.subplots(1, len(columns), figsize = (18, 5), sharey = True)[1]
     for i, column in enumerate(columns):
         sns.distplot(df[column], ax = axes[i])
     plt.show()
@@ -391,10 +373,10 @@ def polPlusCompScatter(df):
     plt.show()
 def midCloud(df, lower = -0.15, interval = 0.3, sentiment = [-1,0,1,2]):
     data = df[(df['sentiment']==sentiment) & (df['compound'] < lower + interval) & (df['compound'] > lower)]
-    plotWordCloud(data, label = f'Neutral where: {lower} < Compound < {lower+interval}')
+    plotWordCloud(data, label = f'Neutral where: {lower} < Compound < {lower+interval}', column = 'tweets_clean')
 def upperCloud(df, upper = 0.6, sentiment = [-1,0,1,2]):
     data = df[(df['sentiment']==sentiment)&(df['compound'] > upper)]
-    plotWordCloud(data, label = f'compound > {upper}')
+    plotWordCloud(data, label = f'compound > {upper}', column = 'tweets_clean')
 def lowerCloud(df, lower = -0.6, sentiment = [-1,0,1,2]):
     data = df[(df['sentiment']==sentiment)&(df['compound'] > lower)]
-    plotWordCloud(data, label = f'compound > {lower}')
+    plotWordCloud(data, label = f'compound > {lower}', column = 'tweets_clean')
