@@ -98,6 +98,8 @@ def prepareData(df):
 	prep_df['handles'] = prep_df['message'].map(prep.findHandles)
 	prep_df['hash_tags'] = prep_df['message'].map(prep.findHashTags)
 	prep_df['tweets'] = prep_df['message'].map(prep.removePunctuation)
+	target_map = {-1:'Anti', 0:'Neutral', 1:'Pro', 2:'News'}
+	prep_df['target'] = prep_df['sentiment'].map(target_map)
 	return prep_df
 
 interactive = prepareData(raw)
@@ -381,9 +383,40 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
 		# Import data
 		ins_data = interactive.copy()
 		# Feature Engineering
-		vocab = eda.getVocab(ins_data['tweet_clean'])
+		@st.cache
+		def feat_engine(df):
+			feat = df.copy()
+			feat['tweets'] = feat['tweets'].map(prep.tweetTokenizer)
+			feat['tweets'] = feat['tweets'].map(prep.removeStopWords)
+			feat['tweets'] = feat['tweets'].map(prep.lemmatizeTweet)
+			return feat
+		ins_data = feat_engine(ins_data)
+		@st.cache
+		def build_corpus(df):
+			vocab = eda.getVocab(df = ins_data['tweets'])
+			word_frequency_dict = eda.wordFrequencyDict(df,'target',vocab)
+			class_words = eda.getClassWords(word_frequency_dict)
+			ordered_words = eda.getOrder(class_words,df)
+			most_common = eda.topNWords(ordered_words, n=5000)
+			return vocab, word_frequency_dict, class_words, ordered_words, most_common
+			
+		vocab, word_frequency_dict, class_words, ordered_words, most_common = build_corpus(ins_data)
+
+		insights_pages = ["Instructions", "Overview", "Neutral", "Pro", "Anti"]
+		ins_page = st.selectbox("",insights_pages)
+
+		# Building out Instructions Page
+		if ins_page == "Instructions":
+			st.write(f""" 1. `Filter` your wordcloud's vocabulary by `word frequency`
+""")
 		
-		
+		# Building out the Overview page
+		if ins_page == "Overview":
+			st.write("""# BLANK""")
+
+		if ins_page == "Neutral":
+			st.write("""# BLANK""")
+			#vocab = eda.getVocab(df = ins_data[ins_data'tweets'])
 	##########################################################################################
 	############################---------BULELANI-ZANELE-END----------########################
 	##########################################################################################
