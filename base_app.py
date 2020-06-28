@@ -107,7 +107,7 @@ def prepareData(df):
 interactive = prepareData(raw)
 
 # Feature Engineering
-@st.cache
+@st.cache(allow_output_mutation=True)
 def feat_engine(df):
 	feat = df.copy()
 	feat['tweets'] = feat['tweets'].map(prep.tweetTokenizer)
