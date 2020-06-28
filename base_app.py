@@ -92,94 +92,36 @@ def prepareData(df):
 		prep_df (DataFrame): cleaned DataFrame
 	"""
 	prep_df = df.copy()
+	target_map = {-1:'Anti', 0:'Neutral', 1:'Pro', 2:'News'}
+	prep_df['target'] = prep_df['sentiment'].map(target_map)
 	prep_df = prep.typeConvert(prep_df)
 	prep_df['urls'] = prep_df['message'].map(prep.findURLs)
 	prep_df = prep.strip_url(prep_df)
 	prep_df['handles'] = prep_df['message'].map(prep.findHandles)
 	prep_df['hash_tags'] = prep_df['message'].map(prep.findHashTags)
 	prep_df['tweets'] = prep_df['message'].map(prep.removePunctuation)
-	target_map = {-1:'Anti', 0:'Neutral', 1:'Pro', 2:'News'}
-	prep_df['target'] = prep_df['sentiment'].map(target_map)
+
 	return prep_df
 
 interactive = prepareData(raw)
 
-### Feature Extraction
+# Feature Engineering
+@st.cache
+def feat_engine(df):
+	feat = df.copy()
+	feat['tweets'] = feat['tweets'].map(prep.tweetTokenizer)
+	feat['tweets'] = feat['tweets'].map(prep.removeStopWords)
+	feat['tweets'] = feat['tweets'].map(prep.lemmatizeTweet)
+	return feat
 @st.cache(allow_output_mutation=True)
-def featureCreation(df, uncommon = 10000, common = 20):
-	"""
-	Create features from input dataframe
-	Parameters
-	----------
-		df (DataFrame): input DataFrame
-		uncommon (int): keep top n words Default = 10000
-		common (int): remove n most common words Default = 20
-	Returns
-	-------
-		feat_df (DataFrame): output DataFrame
-	"""
-	feat_df = df.copy()
-	# Prepare data for feature manipulation
-	feat_df['tweets'] = feat_df['tweets'].map(prep.tweetTokenizer)
-	feat_df['tweets'] = feat_df['tweets'].map(prep.removeStopWords)
-	feat_df['tweets'] = feat_df['tweets'].map(prep.lemmatizeTweet)
-
-	# Create a vocabulary
-	vocab = list()
-	for tweet in feat_df['tweets']:
-		for token in tweet:
-			vocab.append(token)
-
-	# Create a frequency list
-	ordered_words = Counter(vocab).most_common()
-	# creat a list of most common words
-	top_n_words = prep.topNWords(ordered_words, n = uncommon)
-
-	# Remove infrequent words
-	feat_df['tweets_clean'] = feat_df['tweets'].map(lambda tweet: prep.removeInfrequentWords(tweet, top_n_words))
-
-	# Create list of very common words
-	very_common_words = prep.topNWords(ordered_words, n = common)
-
-	# Remove common words
-	feat_df['tweets_clean'] = feat_df['tweets_clean'].map(lambda tweet: prep.removeCommonWords(tweet, very_common_words))
-
-	# Count the tweet length
-	feat_df['len_of_tweet'] = feat_df['tweets_clean'].map(prep.lengthOfTweet)
-	
-	# Add target labels
-	target_map = {-1:'Anti', 0:'Neutral', 1:'Pro', 2:'News'}
-	feat_df['target'] = feat_df['sentiment'].map(target_map)
-
-	# Calculate tweet sentiment
-	nltk_scores = dict(compound = list(), negative = list(), neutral = list(), positive = list())
-	for tweet in feat_df['message']:
-		output = prep.getPolarityScores(tweet)
-		nltk_scores['compound'].append(output['compound'])
-		nltk_scores['negative'].append(output['neg'])
-		nltk_scores['neutral'].append(output['neu'])
-		nltk_scores['positive'].append(output['pos'])
-
-	if 'compound' in feat_df.columns:
-		feat_df.drop(['compound', 'negative', 'neutral', 'positive'], axis = 1, inplace = True)
-		feat_df = pd.concat([feat_df, pd.DataFrame(nltk_scores)], axis = 1)
-	else:
-		feat_df = pd.concat([feat_df, pd.DataFrame(nltk_scores)], axis = 1)
-
-	sentiment_scores = [TextBlob(' '.join(tweet)).sentiment for tweet in feat_df['message']]
-
-	pol = list()
-	subj = list()
-	for scores in sentiment_scores:
-		pol.append(scores.polarity)
-		subj.append(scores.subjectivity)
-
-	feat_df['polarity'] = pol
-	feat_df['subjectivity'] = subj
-
-	return feat_df
-
-# eda = featureCreation(interactive)
+def build_corpus(df):
+	corp_df = df.copy()
+	vocab = eda.getVocab(corp_df['tweets'])
+	word_frequency_dict = eda.wordFrequencyDict(df,'target',vocab)
+	class_words = eda.getClassWords(word_frequency_dict)
+	pro_spec_words, neutral_spec_words, anti_spec_words, news_spec_words, label_specific_words,class_specific_words, ordered_words = eda.getOrder(class_words,df)
+	df = eda.applyScores(df)
+	return df, vocab, word_frequency_dict, class_words, pro_spec_words, neutral_spec_words, anti_spec_words, news_spec_words, label_specific_words,class_specific_words, ordered_words
 
 # The main function where we will build the actual app
 def main():
@@ -382,29 +324,14 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
 	if selection == "Insights":
 		# Import data
 		ins_data = interactive.copy()
-		# Feature Engineering
-		@st.cache
-		def feat_engine(df):
-			feat = df.copy()
-			feat['tweets'] = feat['tweets'].map(prep.tweetTokenizer)
-			feat['tweets'] = feat['tweets'].map(prep.removeStopWords)
-			feat['tweets'] = feat['tweets'].map(prep.lemmatizeTweet)
-			return feat
-		ins_data = feat_engine(ins_data)
-		@st.cache
-		def build_corpus(df):
-			vocab = eda.getVocab(df = ins_data['tweets'])
-			word_frequency_dict = eda.wordFrequencyDict(df,'target',vocab)
-			class_words = eda.getClassWords(word_frequency_dict)
-			ordered_words = eda.getOrder(class_words,df)
-			most_common = eda.topNWords(ordered_words, n=5000)
-			return vocab, word_frequency_dict, class_words, ordered_words, most_common
-			
-		vocab, word_frequency_dict, class_words, ordered_words, most_common = build_corpus(ins_data)
 
+		ins_data = feat_engine(ins_data)
+			
+		ins_data, vocab, word_frequency_dict, class_words, pro_spec_words, neutral_spec_words, anti_spec_words, news_spec_words, label_specific_words,class_specific_words, ordered_words = build_corpus(ins_data)
+		
 		insights_pages = ["Instructions", "Overview", "Neutral", "Pro", "Anti"]
 		ins_page = st.selectbox("",insights_pages)
-
+		
 		# Building out Instructions Page
 		if ins_page == "Instructions":
 			st.write(f""" 1. `Filter` your wordcloud's vocabulary by `word frequency`
@@ -412,7 +339,38 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
 		
 		# Building out the Overview page
 		if ins_page == "Overview":
-			st.write("""# BLANK""")
+			st.write("""Wordcloud with full dataset""")
+			# Import Data
+			over_data = ins_data.copy()
+			# st.write(over_data['tweets'])
+			
+			# Step 1: Filter infrequent words
+			n_1 = st.sidebar.slider('Step 1: Filter infrequent words', min_value = 0, max_value = 13000, step = 1000, value=10000)
+			top_n_words = eda.topNWords(ordered_words, n=n_1)
+			to_include = top_n_words + class_specific_words
+			over_data['tweets_clean'] = over_data['tweets'].map(lambda tweet: eda.removeInfrequentWords(tweet, include = to_include))
+			# st.write(over_data['tweets_clean'])
+
+			# Step 2: Filter very frequent words
+			n_2 = st.sidebar.slider('Step 2: Filter very common words', min_value = 0, max_value=40, step =2, value = 20)
+			very_common_words = eda.topNWords(ordered_words, n = n_2)
+			over_data['tweets_clean'] = over_data['tweets'].map(lambda tweet: eda.removeCommonWords(tweet, very_common_words))
+			# st.write(over_data['tweets_clean'])
+			
+			# Step 3
+			# display number of unique words
+			# all_vocab = eda.allVocab(over_data, 'tweets_clean')
+			# st.write("There are ",pd.Series(all_vocab).nunique(), " unique words")
+			
+			# Plotting the general wordcloud
+			eda.plotWordCloud(data=over_data, label = "Overview")
+			st.pyplot()
+
+			# Plotting the general positive sentiments
+
+			data_pos_gen = over_data[over_data['compound'] > 0.25]
+			eda.plotWordCloud(data=data_pos_gen, label = "Overview")
+			st.pyplot()
 
 		if ins_page == "Neutral":
 			st.write("""# BLANK""")
@@ -420,17 +378,7 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
 	##########################################################################################
 	############################---------BULELANI-ZANELE-END----------########################
 	##########################################################################################
-	## What was done to prep_df
-	# 	prep_df = df.copy()
-	# prep_df = prep.typeConvert(prep_df)
-	# prep_df['urls'] = prep_df['message'].map(prep.findURLs)
-	# prep_df = prep.strip_url(prep_df)
-	# prep_df['handles'] = prep_df['message'].map(prep.findHandles)
-	# prep_df['hash_tags'] = prep_df['message'].map(prep.findHashTags)
-	# prep_df['tweets'] = prep_df['message'].map(prep.removePunctuation)
-	# return prep_df
-	### Zanele and Bulelani review and finalize
-	### Delete instruction comments when done
+
 ######################################################################################################
 ##################################----------INSIGHTS-PAGE-END-----------##############################
 ######################################################################################################
