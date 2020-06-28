@@ -51,7 +51,6 @@ def getVocab(df):
         for token in tweet:
             vocab.append(token)
     return vocab
-
 def wordFrequencyDict(df, target, vocab):
     """
     function that returns dictionary of word frequencies from a dataframe
@@ -86,7 +85,6 @@ def wordFrequencyDict(df, target, vocab):
             ordered_class_words_freq.append((word, word_frequency))
             word_frequency_dict[label] = ordered_class_words_freq
     return word_frequency_dict
-
 def getClassWords(word_frequency_dict):
     """
     doctstring
@@ -112,7 +110,6 @@ def getClassWords(word_frequency_dict):
                 words.append(word)
         class_words[label] = words
     return class_words
-
 def getOrder(class_words, df):
     """
     
@@ -132,7 +129,6 @@ def getOrder(class_words, df):
 
     ordered_words = Counter(vocab).most_common()
     return ordered_words
-
 def topNWords(ordered_words, n = 5000):
     """
     count total vocabulary from Dataframe message
@@ -148,7 +144,6 @@ def topNWords(ordered_words, n = 5000):
     for word in ordered_words[:n]:
         most_common.append(word[0])
     return most_common
-
 def removeInfrequentWords(tweet, include):
     """
     Function that goes through the words in a tweet,
@@ -178,14 +173,12 @@ def removeInfrequentWords(tweet, include):
         if token in include:
             filt_tweet.append(token)
     return filt_tweet
-
 def allVocab(df, target = 'tweets_clean'):
     all_vocab = list()
     for tweet in df[target]:
         for token in tweet:
             all_vocab.append(token)
     return all_vocab
-
 def removeCommonWords(tweet, very_common_words):
     """
     removes the most common words from a list of given words
@@ -206,7 +199,6 @@ def removeCommonWords(tweet, very_common_words):
         if token not in very_common_words:
             filt_tweet.append(token)
     return filt_tweet
-
 def lengthOfTweet(tweet):
     """
     return the length of each tweet in the dataset
@@ -221,18 +213,15 @@ def lengthOfTweet(tweet):
     """
     length = len(tweet)
     return length
-
 def plotDist(df, target = 'len_of_tweet'):
     sns.distplot(df[target])
     plt.show()
-
 def plotCounts(df):
     sns.countplot(data = df, x = 'target', palette = {'Pro':'#CCCC00', 'News':'teal', 'Neutral':'teal', 'Anti':'teal'})
     plt.title('Count of Sentiments\n')
     plt.xlabel('\nSentiment')
     plt.ylabel('Count\n')
     plt.show()
-
 def plotWordCloud(data, label):
     """
     the plot of the most common use of words that appear bigger than words that
@@ -267,7 +256,6 @@ def plotWordCloud(data, label):
     plt.axis("off")
     plt.margins(x=0, y=0)
     plt.show()
-
 def getPolarityScores(tweet):
     """
     return the polarity score of each tweet in the dataset
@@ -287,7 +275,6 @@ def getPolarityScores(tweet):
     scores = sid.polarity_scores(tweet) 
     # return the polarity scores
     return scores
-
 def applyScores(data):
     nltk_scores = dict(compound = list(), negative = list(), neutral = list(), positive = list())
     for tweet in data['tweets_clean']:
@@ -309,7 +296,6 @@ def applyScores(data):
         # concatenate directly if this is the first execution
         data = pd.concat([data, pd.DataFrame(nltk_scores)], axis = 1)
     return data
-
 def getPolaritySubjectivity(data):
     sentiment_scores = [TextBlob(' '.join(tweet)).sentiment for tweet in data['tweets_clean']]
 
@@ -323,7 +309,6 @@ def getPolaritySubjectivity(data):
     data['polarity'] = pol
     data['subjectivity'] = subj
     return data
-
 def violinPlots(data, target = 'target'):
     fig, axes = plt.subplots(1, 3, figsize = (18, 5))
     for i, column in enumerate(['compound', 'polarity', 'subjectivity']):
@@ -336,7 +321,6 @@ def violinPlots(data, target = 'target'):
         g.set_xlabel(' ')
     plt.show()
     return fig
-
 def plotScatter(x, y, df, title):
     """
     display the scatter plot
@@ -362,14 +346,12 @@ def plotScatter(x, y, df, title):
                 horizontalalignment='left', size='large', color='black')
     
     plt.show()
-
 def plotAltScatter(df, X = 'compound', y_ = 'polarity', title_ = 'Compound Vs Polarity\n'):
     data = df.groupby('target')[['negative', 'positive', 'neutral', 'compound', 'polarity', 'subjectivity']].mean().reset_index()
     plotScatter(x = X, y = y_, df = data, title = title_)
     plt.xlabel('\nCompound Score')
     plt.ylabel('Polarity\n')
     plt.show()
-
 def arrowScatter(df):
     plt.figure(figsize = (8, 5))
     sns.scatterplot(data = df, x = 'subjectivity', y = 'polarity', color = 'teal', hue = 'target', alpha = 1/3)
@@ -379,14 +361,12 @@ def arrowScatter(df):
     plt.xlabel('\nSubjectivity')
     plt.ylabel('Polarity')
     plt.show()
-
 def histPlot(df):
     columns = ['polarity', 'compound']
     fig, axes = plt.subplots(1, len(columns), figsize = (18, 5), sharey = True)
     for i, column in enumerate(columns):
         sns.distplot(df[column], ax = axes[i])
     plt.show()
-
 def polCompNeutralPlot(df):
     # variables of columns from dataframe that are conditioned to zero
     # polarity_mask = df['polarity'] == 0
@@ -396,20 +376,16 @@ def polCompNeutralPlot(df):
     sum_of_pol_and_comp = df['polarity'].add(df['compound'])
     sns.distplot(sum_of_pol_and_comp)
     plt.show()
-
 def polPlusCompScatter(df):
     data = df.groupby('target')[['pol_plus_comp', 'subjectivity']].mean().reset_index()
     plotScatter(x = 'subjectivity', y = 'pol_plus_comp', df = data, title="Polarity & Compound vs Subjectivity")
     plt.show()
-
 def midCloud(df, lower = -0.15, interval = 0.3, sentiment = [-1,0,1,2]):
     data = df[(df['sentiment']==sentiment) & (df['compound'] < lower + interval) & (df['compound'] > lower)]
     plotWordCloud(data, label = f'Neutral where: {lower} < Compound < {lower+interval}')
-
 def upperCloud(df, upper = 0.6, sentiment = [-1,0,1,2]):
     data = df[(df['sentiment']==sentiment)&(df['compound'] > upper)]
     plotWordCloud(data, label = f'compound > {upper}')
-
 def lowerCloud(df, lower = -0.6, sentiment = [-1,0,1,2]):
     data = df[(df['sentiment']==sentiment)&(df['compound'] > lower)]
     plotWordCloud(data, label = f'compound > {lower}')
