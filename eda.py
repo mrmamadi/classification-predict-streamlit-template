@@ -73,9 +73,9 @@ def wordFrequencyDict(df, target, vocab):
     """
 
     word_frequency_dict = {}
-    for label in df[target].unique():
-        data = df[df[target] == label]
-        class_vocab = getVocab(data)
+    for label in df['target'].unique():
+        data = df[df['target'] == label]
+        class_vocab = getVocab(data['tweets'])
         length_of_vocab = len(class_vocab)
         ordered_class_words = Counter(class_vocab).most_common()
         ordered_class_words_freq = list()
@@ -119,16 +119,16 @@ def getOrder(class_words, df):
     anti_spec_words = list(set(class_words['Anti']) - set(class_words['Pro']).union(set(class_words['Neutral'])).union(set(class_words['News'])))
     news_spec_words = list(set(class_words['News']) - set(class_words['Pro']).union(set(class_words['Neutral'])).union(set(class_words['Anti'])))
 
-    # label_specific_words = dict(
-    #     Pro = pro_spec_words, Neutral = neutral_spec_words, Anti = anti_spec_words, News = news_spec_words
-    #     )
-    vocab = getVocab(df)
-
+    label_specific_words = dict(
+    Pro = pro_spec_words, Neutral = neutral_spec_words, Anti = anti_spec_words, News = news_spec_words
+    )
+    label_specific_words['Pro'][:5]
     class_specific_words = pro_spec_words + neutral_spec_words + anti_spec_words + news_spec_words
     class_specific_words[:5], len(class_specific_words)
-
+    vocab = getVocab(df['tweets'])
     ordered_words = Counter(vocab).most_common()
-    return ordered_words
+    
+    return pro_spec_words, neutral_spec_words, anti_spec_words, news_spec_words, label_specific_words,class_specific_words, ordered_words
 def topNWords(ordered_words, n = 5000):
     """
     count total vocabulary from Dataframe message
@@ -277,7 +277,7 @@ def getPolarityScores(tweet):
     return scores
 def applyScores(data):
     nltk_scores = dict(compound = list(), negative = list(), neutral = list(), positive = list())
-    for tweet in data['tweets_clean']:
+    for tweet in data['tweets']:
         output = getPolarityScores(tweet)
         nltk_scores['compound'].append(output['compound'])
         nltk_scores['negative'].append(output['neg'])
