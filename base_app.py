@@ -325,7 +325,7 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
 	if selection == "Insights":
 		# Import data
 		ins_data = interactive.copy()
-
+		# Data 
 		ins_data = feat_engine(ins_data)
 			
 		ins_data, vocab, word_frequency_dict, class_words, pro_spec_words, neutral_spec_words, anti_spec_words, news_spec_words, label_specific_words,class_specific_words, ordered_words = build_corpus(ins_data)
@@ -361,19 +361,21 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
 			over_data['tweets_clean'] = over_data['tweets'].map(lambda tweet: eda.removeCommonWords(tweet, very_common_words))
 			# st.write(over_data['tweets_clean'])
 			
-			# Step 3
-			# display number of unique words
-			# all_vocab = eda.allVocab(over_data, 'tweets_clean')
-			# st.write("There are ",pd.Series(all_vocab).nunique(), " unique words")
-			
 			# Plotting the general wordcloud
 			eda.plotWordCloud(data=over_data, label = "Overview")
 			st.pyplot()
 
 			# Plotting the general positive sentiments
-
-			data_pos_gen = over_data[over_data['compound'] > 0.25]
+			n_3 = st.slider("Positive Threshhold", min_value = 0.0, max_value=1.0, step =0.1, value = 0.1)
+			data_pos_gen = over_data[over_data['compound'] > n_3]
 			eda.plotWordCloud(data=data_pos_gen, label = "Positive Sentiments")
+			st.pyplot()
+
+			# Plotting the general  neutral sentiments
+			n_4 = st.slider("Neutral Lower Threshhold", min_value = -1.0, max_value=-0.05, step =0.05, value = -0.15)
+
+			data_pos_gen = over_data[(over_data['compound'] > n_4) & (over_data['compound'] < n_4*-2)]
+			eda.plotWordCloud(data=data_pos_gen, label = "Neutral Sentiments")
 			st.pyplot()
 
 		if ins_page == "Neutral":
