@@ -282,24 +282,69 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
 ######################################################################################################
 
 
+	# get the data
+	
+	path = "https://raw.githubusercontent.com/mrmamadi/classification-predict-streamlit-template/dev/resources/datasets/train_data_trans.csv"
+	train_data = pd.read_csv(path)
+	av_data = train_data.groupby('target')[['compound', 'polarity', 'subjectivity']].mean().reset_index()
+
 	# Building out the "EDA" page
 	if selection == "EDA":
-		# Create a new Page
-		eda_sections = ["Word Frequencies", "Text Analysis", "Sentiment Analysis"]
-		eda_section = st.selectbox("", eda_sections) # if eda_section == "xxx":
-		st.write('add stuff here')
-		
-		# Data preperation (Do not build complex functions, consider only using functions on the page you need them)
+		# visualise the target
+		eda.plotCounts(df = train_data)
+		st.pyplot()
 
-		# Building the Word Frequencies page
-		if eda_section == "Word Frequencies":
-			st.write("fill eda")
-		# Building the Text Analysis Page
-		if eda_section == "Text Analysis":
-			st.write("fill eda")
+		# Create a new Page
+		eda_sections = ["Sentiment Analysis"]
+		eda_section = st.selectbox("", eda_sections) # if eda_section == "xxx":
+		st.write('Sentiment Analysis')
+
 		# Building the Sentiment Analysis Page
 		if eda_section == "Sentiment Analysis":
-			st.write("fill eda")
+
+
+			# plotting violin-plots
+			fig = plt.figure()
+			for i, column in enumerate(['compound']):
+			    g = sns.violinplot(data = train_data, x = 'target', y = column, palette = {'Pro':'#CCCC00', 'News':'teal', 'Neutral':'teal', 'Anti':'teal'})
+			    # g.set_title(column)
+			    # g.set_ylabel('Scores')
+			    # g.set_xlabel('Compound')
+			st.pyplot()
+
+			# plotting violin-plots
+			fig = plt.figure()
+			for i, column in enumerate(['subjectivity']):
+			    g = sns.violinplot(data = train_data, x = 'target', y = column, palette = {'Pro':'#CCCC00', 'News':'teal', 'Neutral':'teal', 'Anti':'teal'})
+    			# g.set_title(column)
+			    # g.set_ylabel('Scores')
+			    # g.set_xlabel('subjectivity')
+			st.pyplot()
+
+		# plotting scatter-plot
+		st.write(av_data)
+		# x = 'compound'
+		# y = 'polarity'
+		# fig = plt.figure()
+	 #    g = sns.scatterplot(data = data, x = x, y = y, hue = 'target', legend = False, palette = {'Pro':'#CCCC00', 'News':'teal', 'Neutral':'teal', 'Anti':'teal'})
+	 #    g.set_title(title, fontsize = 20)
+	    
+	 #    # add annotations one by one with a loop
+	 #    for line in range(0,data.shape[0]):
+	 #        g.text(data[x][line], data[y][line], data['target'][line], 
+	 #                horizontalalignment='left', size='large', color='black')
+	 #    st.pyplot()
+
+
+		eda.plotScatter(x = 'compound', y = 'polarity', df = av_data, title = 'Compound Vs Polarity\n')
+		st.pyplot()			
+
+# 			st.markdown("""
+# """)
+
+			
+
+
 # TASKS:
 # 1. Build out the Word  Frequencies Page
 # 2. Visualize the top n words per sentiment
