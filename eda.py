@@ -222,7 +222,7 @@ def plotCounts(df):
     plt.xlabel('\nSentiment')
     plt.ylabel('Count\n')
     plt.show()
-def plotWordCloud(data, label):
+def plotWordCloud(data, label, column):
     """
     the plot of the most common use of words that appear bigger than words that
     appear infrequent in a text document by each sentiment
@@ -241,7 +241,7 @@ def plotWordCloud(data, label):
         plotWordCloud(data, label = 'Sentiment = Pro')
     """
     words = list()
-    for tweet in data['tweets_clean']:
+    for tweet in data[column]:
         for token in tweet:
             words.append(token)
     words = ' '.join(words)
@@ -251,26 +251,14 @@ def plotWordCloud(data, label):
         contour_width=3,
         contour_color='firebrick',
         font_path=None,
+        min_font_size=6,
         margin=2,
         ranks_only=None,
-        mask=None,
-        scale=2,
         max_words=500,
-        min_font_size=4,
-        stopwords=None,
-        random_state=None,
-        background_color='white',
-        max_font_size=None,
-        font_step=1,
-        relative_scaling='auto',
-        regexp=None,
-        collocations=True,
-        colormap="magma_r", # magma_r,
-        normalize_plurals=True,
-        repeat=False,
-        include_numbers=True,
-        min_word_length=0,
-        collocation_threshold=30).generate(words)
+        min_word_length=5,
+        background_color='#78909C',
+        colormap="twilight_shifted", # GnBu, GnBu_r, Greens, Greens_r, Greys, Greys_r, OrRd, OrRd_r, Oranges, Oranges_r, PRGn, PRGn_r, Paired, Paired_r, Pastel1, Pastel1_r, Pastel2, Pastel2_r, PiYG, PiYG_r, PuBu, PuBuGn, PuBuGn_r, PuBu_r, PuOr, PuOr_r, PuRd, PuRd_r, Purples, Purples_r, RdBu, RdBu_r, RdGy, RdGy_r, RdPu, RdPu_r, RdYlBu, RdYlBu_r, RdYlGn, RdYlGn_r, Reds, Reds_r, Set1, Set1_r, Set2, Set2_r, Set3, Set3_r, Spectral, Spectral_r, Wistia, Wistia_r, YlGn, YlGnBu, YlGnBu_r, YlGn_r, YlOrBr, YlOrBr_r, YlOrRd, YlOrRd_r, afmhot, afmhot_r, autumn, autumn_r, binary, binary_r, bone, bone_r, brg, brg_r, bwr, bwr_r, cividis, cividis_r, cool, cool_r, coolwarm, coolwarm_r, copper, copper_r, cubehelix, cubehelix_r, flag, flag_r, gist_earth, gist_earth_r, gist_gray, gist_gray_r, gist_heat, gist_heat_r, gist_ncar, gist_ncar_r, gist_rainbow, gist_rainbow_r, gist_stern, gist_stern_r, gist_yarg, gist_yarg_r, gnuplot, gnuplot2, gnuplot2_r, gnuplot_r, gray, gray_r, hot, hot_r, hsv, hsv_r, icefire, icefire_r, inferno, inferno_r, jet, jet_r, magma, magma_r, mako, mako_r, nipy_spectral, nipy_spectral_r, ocean, ocean_r, pink, pink_r, plasma, plasma_r, prism, prism_r, rainbow, rainbow_r, rocket, rocket_r, seismic, seismic_r, spring, spring_r, summer, summer_r, tab10, tab10_r, tab20, tab20_r, tab20b, tab20b_r, tab20c, tab20c_r, terrain, terrain_r, twilight, twilight_r, , twilight_shifted_r, viridis, viridis_r, vlag, vlag_r, winter, winter_r
+        include_numbers=True).generate(words)
 
     # Display the generated image:
     plt.figure(figsize = (10, 6))
@@ -279,45 +267,8 @@ def plotWordCloud(data, label):
     plt.axis("off")
     plt.margins(x=0, y=0)
     plt.show()
-def getPolarityScores(tweet):
-    """
-    return the polarity score of each tweet in the dataset
-    
-    Parameters
-    ----------
-        tweet (list): list of a tweet
-    Returns
-    -------
-        scores (dict): dictionary of polarity scores
-    
-    """
-    tweet = ' '.join(tweet)
-    # analyse the sentiment
-    sid = SentimentIntensityAnalyzer()
-    # get polarity score of each data
-    scores = sid.polarity_scores(tweet) 
-    # return the polarity scores
-    return scores
 def applyScores(data):
-    nltk_scores = dict(compound = list(), negative = list(), neutral = list(), positive = list())
-    for tweet in data['tweets']:
-        output = getPolarityScores(tweet)
-        nltk_scores['compound'].append(output['compound'])
-        nltk_scores['negative'].append(output['neg'])
-        nltk_scores['neutral'].append(output['neu'])
-        nltk_scores['positive'].append(output['pos'])
-
-    # concatenate the output from above into the main dataset
-    if 'compound' in data.columns:
-    
-        # drop the columns if this has been executed before
-        data.drop(['compound', 'negative', 'neutral', 'positive'], axis = 1, inplace = True)
-    
-        # concatenate a DataFrame version of the nltk_scores dictionary
-        data = pd.concat([data, pd.DataFrame(nltk_scores)], axis = 1)
-    else:
-        # concatenate directly if this is the first execution
-        data = pd.concat([data, pd.DataFrame(nltk_scores)], axis = 1)
+    data['compound'] = data['tweets'].map(lambda tweet: SentimentIntensityAnalyzer().polarity_scores(' '.join(tweet))['compound'])
     return data
 def getPolaritySubjectivity(data):
     sentiment_scores = [TextBlob(' '.join(tweet)).sentiment for tweet in data['tweets_clean']]
@@ -386,7 +337,7 @@ def arrowScatter(df):
     plt.show()
 def histPlot(df):
     columns = ['polarity', 'compound']
-    fig, axes = plt.subplots(1, len(columns), figsize = (18, 5), sharey = True)
+    axes = plt.subplots(1, len(columns), figsize = (18, 5), sharey = True)[1]
     for i, column in enumerate(columns):
         sns.distplot(df[column], ax = axes[i])
     plt.show()
@@ -405,10 +356,10 @@ def polPlusCompScatter(df):
     plt.show()
 def midCloud(df, lower = -0.15, interval = 0.3, sentiment = [-1,0,1,2]):
     data = df[(df['sentiment']==sentiment) & (df['compound'] < lower + interval) & (df['compound'] > lower)]
-    plotWordCloud(data, label = f'Neutral where: {lower} < Compound < {lower+interval}')
+    plotWordCloud(data, label = f'Neutral where: {lower} < Compound < {lower+interval}', column = 'tweets_clean')
 def upperCloud(df, upper = 0.6, sentiment = [-1,0,1,2]):
     data = df[(df['sentiment']==sentiment)&(df['compound'] > upper)]
-    plotWordCloud(data, label = f'compound > {upper}')
+    plotWordCloud(data, label = f'compound > {upper}', column = 'tweets_clean')
 def lowerCloud(df, lower = -0.6, sentiment = [-1,0,1,2]):
     data = df[(df['sentiment']==sentiment)&(df['compound'] > lower)]
-    plotWordCloud(data, label = f'compound > {lower}')
+    plotWordCloud(data, label = f'compound > {lower}', column = 'tweets_clean')
