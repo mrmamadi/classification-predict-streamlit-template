@@ -616,13 +616,13 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
             # You can use a dictionary or similar structure to make this output
             # more human interpretable.
             if prediction == -1:
-                result = 'Anti'
+                result = 'Anti: the tweet does not believe in man-made climate change'
             elif prediction == 0:
-                result = 'Neutral'
+                result = 'Neutral: the tweet neither supports nor refutes the belief of man-made climate change'
             elif prediction == 1:
-                result = 'Pro'
+                result = 'Pro: the tweet supports the belief of man-made climate change'
             else:
-                result = 'News'
+                result = 'News: the tweet links to factual news about climate change'
 
             st.success("Text Categorized as: {}".format(result))
 
