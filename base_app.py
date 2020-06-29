@@ -357,6 +357,14 @@ are lower on subjectivity, and so are the Neutral group tweets. Perhaps now we h
 			st.pyplot()
 
 			# plotting scatter-plot
+			st.markdown("""
+We'll start off by plotting compound versus polarity in a two dimensional space. We then indicate where in 
+that space each class would lie based on their computed average values of sentiment. Looking at the figure, 
+it is clear that the News tweets tend to perceive climate change almost similar to the way the Pro group does. 
+The Anti group is a little further. The Neutral group is furthest. An additional finding is that, in a 
+spectrum that goes from negative to positive, both Pro and News fall somewhere inbetween. With the Anti group
+ being the most negative and the Neutral group being the most positive.""")
+			
 			eda.plotScatter(x = 'compound', y = 'polarity', df = av_data, title = 'Compound Vs Polarity\n')
 			st.pyplot()
 
