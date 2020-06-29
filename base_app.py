@@ -202,112 +202,7 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
             """,unsafe_allow_html=True)
             st.image(r"resources/imgs/base_app/contributor1.jpg", width=128)
 
-######################################################################################################
-##################################------------PREDICTION-PAGE-----------##############################
-######################################################################################################
 
-    ### DEADLINE: 27/06/2020 - Saturday
-    ### Delete an issue after committing please
-
-    ### ISSUES use: git commit -m "Description. Fixes issue x" : Where "x" is the issue number
-    ### 6. Add VECTORIZERS.PKL to resources\vectorizers folder
-    ### 7. Create a  selectbox to choose from vectorizers
-    ### 8. write an "if and else" function in order to make a prediction with the user selections
-    ### 9. Add vectorizers.md to the resources\markdown folder briefly explaining what a vectorizer does
-    ###    and the difference beterrn the two
-    ### 10. Add all model.pkl files to the resources\vectorizers folder
-    ### 11. Update selectbox with new nodels
-    ### 12. Write model.md files to explain each model briefly and perhaps mention the models f1-score
-
-    ##########################################################################################
-    ############################------------MELVA-MRMAMADI------------########################
-    ##########################################################################################
-
-    # Building out the "Prediction" page
-    if selection == "Prediction":
-
-        ins_data = interactive.copy()
-
-        ins_data = feat_engine(ins_data)
-
-        ins_data, vocab, word_frequency_dict, class_words, pro_spec_words, neutral_spec_words, anti_spec_words, news_spec_words, label_specific_words,class_specific_words, ordered_words = build_corpus(ins_data)
-
-        top_n_words = eda.topNWords(ordered_words, n=5000)
-
-        very_common_words = eda.topNWords(ordered_words, n = 20)
-
-
-        st.info("Prediction with ML Models")
-
-        # Creating a selection box to choose different models
-        models = ['Support Vector','Logistic Regression', 'Nearest Neighbours',
-         'AdaBoost', 'Naive Bayes', 'Decision Tree']
-        classifiers = st.selectbox("Choose a classifier", models)
-
-        # Creating a text box for user input
-        tweet_text = st.text_area("Enter Text","Type Here")
-
-        if st.button("Classify"):
-
-            tweet = prep.removePunctuation(tweet_text)
-            tweet = prep.tweetTokenizer(tweet)
-            tweet = prep.removeStopWords(tweet)
-            tweet = prep.lemmatizeTweet(tweet)
-            tweet = prep.removeInfrequentWords(tweet,
-            top_n_words = top_n_words + class_specific_words)
-            tweet = prep.removeCommonWords(tweet,
-            bag=very_common_words)
-            tweet = [' '.join(tweet)]
-
-            if classifiers == 'Support Vector':
-                predictor = joblib.load(open(os.path.join("resources/support_vector.pkl"),"rb"))
-                prediction = predictor.predict(tweet)
-
-            elif classifiers == 'Logistic Regression':
-                predictor = joblib.load(open(os.path.join("resources/logistic_regression.pkl"),"rb"))
-                prediction = predictor.predict(tweet)
-
-            elif classifiers == 'Nearest Neighbours':
-                predictor = joblib.load(open(os.path.join("resources/nearest_neighbors.pkl"),"rb"))
-                prediction = predictor.predict(tweet)
-
-            elif classifiers == 'AdaBoost':
-                predictor = joblib.load(open(os.path.join("resources/adaboost.pkl"),"rb"))
-                prediction = predictor.predict(tweet)
-
-            elif classifiers == 'Naive Bayes':
-                predictor = joblib.load(open(os.path.join("resources/naive_bayes.pkl"),"rb"))
-                prediction = predictor.predict(tweet)
-
-            elif classifiers == 'Decision Tree':
-                predictor = joblib.load(open(os.path.join("resources/decision_tree.pkl"),"rb"))
-                prediction = predictor.predict(tweet)
-
-            # elif classifiers == 'Random Forest':
-            #     predictor = joblib.load(open(os.path.join("resources/random_forest.pkl"),"rb"))
-            #     prediction = predictor.predict(tweet)
-            # When model has successfully run, will print prediction
-            # You can use a dictionary or similar structure to make this output
-            # more human interpretable.
-            if prediction == -1:
-                result = 'Anti'
-            elif prediction == 0:
-                result = 'Neutral'
-            elif prediction == 1:
-                result = 'Pro'
-            else:
-                result = 'News'
-
-            st.success("Text Categorized as: {}".format(result))
-
-    ##########################################################################################
-    ############################----------MELVA-MRMAMADI-END----------########################
-    ##########################################################################################
-    ### Zanele and Bulelani review and finalize
-    ### Delete instruction comments when done
-######################################################################################################
-##################################----------PREDICTION-PAGE-END---------##############################
-######################################################################################################
 
 #====================================================================================================#
 
@@ -415,6 +310,115 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
 
 ######################################################################################################
 ##################################----------INSIGHTS-PAGE-END-----------##############################
+######################################################################################################
+
+#====================================================================================================#
+
+######################################################################################################
+##################################------------PREDICTION-PAGE-----------##############################
+######################################################################################################
+
+    ### DEADLINE: 27/06/2020 - Saturday
+    ### Delete an issue after committing please
+
+    ### ISSUES use: git commit -m "Description. Fixes issue x" : Where "x" is the issue number
+    ### 6. Add VECTORIZERS.PKL to resources\vectorizers folder
+    ### 7. Create a  selectbox to choose from vectorizers
+    ### 8. write an "if and else" function in order to make a prediction with the user selections
+    ### 9. Add vectorizers.md to the resources\markdown folder briefly explaining what a vectorizer does
+    ###    and the difference beterrn the two
+    ### 10. Add all model.pkl files to the resources\vectorizers folder
+    ### 11. Update selectbox with new nodels
+    ### 12. Write model.md files to explain each model briefly and perhaps mention the models f1-score
+
+    ##########################################################################################
+    ############################------------MELVA-MRMAMADI------------########################
+    ##########################################################################################
+
+    # Building out the "Prediction" page
+    if selection == "Prediction":
+
+        ins_data = interactive.copy()
+
+        ins_data = feat_engine(ins_data)
+
+        ins_data, vocab, word_frequency_dict, class_words, pro_spec_words, neutral_spec_words, anti_spec_words, news_spec_words, label_specific_words,class_specific_words, ordered_words = build_corpus(ins_data)
+
+        top_n_words = eda.topNWords(ordered_words, n=5000)
+
+        very_common_words = eda.topNWords(ordered_words, n = 20)
+
+
+        st.info("Prediction with ML Models")
+
+        # Creating a selection box to choose different models
+        models = ['Support Vector','Logistic Regression', 'Nearest Neighbours',
+         'AdaBoost', 'Naive Bayes', 'Decision Tree']
+        classifiers = st.selectbox("Choose a classifier", models)
+
+        # Creating a text box for user input
+        tweet_text = st.text_area("Enter Text","Type Here")
+
+        if st.button("Classify"):
+
+            tweet = prep.removePunctuation(tweet_text)
+            tweet = prep.tweetTokenizer(tweet)
+            tweet = prep.removeStopWords(tweet)
+            tweet = prep.lemmatizeTweet(tweet)
+            tweet = prep.removeInfrequentWords(tweet,
+            top_n_words = top_n_words + class_specific_words)
+            tweet = prep.removeCommonWords(tweet,
+            bag=very_common_words)
+            tweet = [' '.join(tweet)]
+
+            if classifiers == 'Support Vector':
+                predictor = joblib.load(open(os.path.join("resources/support_vector.pkl"),"rb"))
+                prediction = predictor.predict(tweet)
+
+            elif classifiers == 'Logistic Regression':
+                predictor = joblib.load(open(os.path.join("resources/logistic_regression.pkl"),"rb"))
+                prediction = predictor.predict(tweet)
+
+            elif classifiers == 'Nearest Neighbours':
+                predictor = joblib.load(open(os.path.join("resources/nearest_neighbors.pkl"),"rb"))
+                prediction = predictor.predict(tweet)
+
+            elif classifiers == 'AdaBoost':
+                predictor = joblib.load(open(os.path.join("resources/adaboost.pkl"),"rb"))
+                prediction = predictor.predict(tweet)
+
+            elif classifiers == 'Naive Bayes':
+                predictor = joblib.load(open(os.path.join("resources/naive_bayes.pkl"),"rb"))
+                prediction = predictor.predict(tweet)
+
+            elif classifiers == 'Decision Tree':
+                predictor = joblib.load(open(os.path.join("resources/decision_tree.pkl"),"rb"))
+                prediction = predictor.predict(tweet)
+
+            # elif classifiers == 'Random Forest':
+            #     predictor = joblib.load(open(os.path.join("resources/random_forest.pkl"),"rb"))
+            #     prediction = predictor.predict(tweet)
+            # When model has successfully run, will print prediction
+            # You can use a dictionary or similar structure to make this output
+            # more human interpretable.
+            if prediction == -1:
+                result = 'Anti'
+            elif prediction == 0:
+                result = 'Neutral'
+            elif prediction == 1:
+                result = 'Pro'
+            else:
+                result = 'News'
+
+            st.success("Text Categorized as: {}".format(result))
+
+    ##########################################################################################
+    ############################----------MELVA-MRMAMADI-END----------########################
+    ##########################################################################################
+    ### Zanele and Bulelani review and finalize
+    ### Delete instruction comments when done
+######################################################################################################
+##################################----------PREDICTION-PAGE-END---------##############################
 ######################################################################################################
 
     st.sidebar.image(r"resources/imgs/base_app/theblobs.png", width=100)
