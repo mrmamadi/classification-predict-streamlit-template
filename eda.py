@@ -26,7 +26,7 @@ from nltk.tokenize import TweetTokenizer
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from nltk.stem.wordnet import WordNetLemmatizer
 from textblob import TextBlob
-
+nltk.download('wordnet')
 # Import datasets
 # train_data = pd.read_csv('/resources/datasets/train.csv')
 
