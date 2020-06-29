@@ -566,8 +566,8 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
         st.info("Prediction with ML Models")
 
         # Creating a selection box to choose different models
-        models = ['Support Vector','Logistic Regression', 'Nearest Neighbours',
-         'AdaBoost', 'Naive Bayes', 'Decision Tree']
+        models = ['Support Vector', 'Nearest Neighbours',
+         'AdaBoost', 'Naive Bayes', 'Decision Tree'] #,'Logistic Regression'
         classifiers = st.selectbox("Choose a classifier", models)
 
         # Creating a text box for user input
