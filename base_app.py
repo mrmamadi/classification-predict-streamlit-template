@@ -624,7 +624,7 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
             else:
                 result = 'News - the tweet links to factual news about climate change'
 
-            st.success("Text Categorized as: {}".format(result))
+            st.success("Text classified as {}".format(result))
 
 ######################################################################################################
 ##################################----------PREDICTION-PAGE-END---------##############################
