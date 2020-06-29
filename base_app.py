@@ -398,13 +398,13 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
             # st.write("There are ",pd.Series(all_vocab).nunique(), " unique words")
 
             # Plotting the general wordcloud
-            eda.plotWordCloud(data=over_data, label = "Overview")
+            eda.plotWordCloud(data=over_data, label = "Overview", column = 'tweets_clean')
             st.pyplot()
 
             # Plotting the general positive sentiments
 
             data_pos_gen = over_data[over_data['compound'] > 0.25]
-            eda.plotWordCloud(data=data_pos_gen, label = "Overview")
+            eda.plotWordCloud(data=data_pos_gen, label = "Overview", column = 'tweets_clean')
             st.pyplot()
 
         if ins_page == "Neutral":
