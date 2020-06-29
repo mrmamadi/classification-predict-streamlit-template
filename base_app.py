@@ -290,20 +290,48 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
 
 	# Building out the "EDA" page
 	if selection == "EDA":
-		# visualise the target
-		eda.plotCounts(df = train_data)
-		st.pyplot()
 
 		# Create a new Page
-		eda_sections = ["Sentiment Analysis"]
+		eda_sections = ["Distribution of the Sentiments", "Sentiment Analysis"]
 		eda_section = st.selectbox("", eda_sections) # if eda_section == "xxx":
-		st.write('Sentiment Analysis')
+
+		if eda_section == "Distribution of the Sentiments":
+
+			st.markdown("""
+Looking at the plot below, we see that the data is distributed unevenly across the sentiments. 
+Generally most tweets fall under the Pro class indicating that the general sentiment is that people do 
+believe in human caused climate change. The second most common class is the News class. 
+Note that this is not really a sentiment class but just news articles relating to climate change. 
+The Neutral class consists of a set of tweets whose sentiment indicates that they neither believe nor 
+disbelieve in human caused climate change. Lastly, the Anti class consists of tweeters who make it 
+clear that they do not belive in human caused climate change. In the sample of tweets provided, 
+these are the minority of the population.""")
+
+
+			# visualise the target
+			eda.plotCounts(df = train_data)
+			st.pyplot()
 
 		# Building the Sentiment Analysis Page
 		if eda_section == "Sentiment Analysis":
 
-
 			# plotting violin-plots
+
+			st.markdown("""
+See the visual below, it is clear that most of the data lies in the same range, 
+ragardless of class. See for example the frist panel, most of the tweets will lie in the zero range of 
+compound scores regardless of whether they are Pro, News or Neutral. The only exception is perhaps the 
+Anti class, the belly in the zero range is smaller and the data is distributed across the range although 
+not evenly. An important aspect of violinplots are the white dots we see in the middle of the bellies. 
+That is the median value of the scores in that class. See that the median scores are relatively the same 
+for both compound and polarity scores. Finally, looking at the colours of the visuals. The coloring is 
+intentinal. If we are to extract insights about how people perceive climate change and whether or not they 
+believe it is real, having sample data on belief we know for sure believe in climate cahnge is a good 
+starting point. Thats why the Pro group is colored differently from the rest. The task now becomes one of 
+figuring out how significantly different is the sample data of the other groups from that of the Pro group. 
+Based on these violin plots for compound and polarity we can't tell. Lets look at subjectivity""")
+
+			st.markdown('##Compound')
 			fig = plt.figure()
 			for i, column in enumerate(['compound']):
 			    g = sns.violinplot(data = train_data, x = 'target', y = column, palette = {'Pro':'#CCCC00', 'News':'teal', 'Neutral':'teal', 'Anti':'teal'})
@@ -312,7 +340,14 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
 			    # g.set_xlabel('Compound')
 			st.pyplot()
 
+			st.markdown("""
+Looking at subjectivity, the belly curves dont really tell anything. But look at the white dots (median), 
+its slightly higher for the Pro and the Anti group. Note that these are people with strong opinions about 
+climate change, very surprising that they are so subjective. News tweets as per our hypothesis earlier they 
+are lower on subjectivity, and so are the Neutral group tweets. Perhaps now we have something to go on""")
+
 			# plotting violin-plots
+			st.markdown('##Subjectivity')
 			fig = plt.figure()
 			for i, column in enumerate(['subjectivity']):
 			    g = sns.violinplot(data = train_data, x = 'target', y = column, palette = {'Pro':'#CCCC00', 'News':'teal', 'Neutral':'teal', 'Anti':'teal'})
@@ -321,29 +356,9 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
 			    # g.set_xlabel('subjectivity')
 			st.pyplot()
 
-		# plotting scatter-plot
-		st.write(av_data)
-		# x = 'compound'
-		# y = 'polarity'
-		# fig = plt.figure()
-	 #    g = sns.scatterplot(data = data, x = x, y = y, hue = 'target', legend = False, palette = {'Pro':'#CCCC00', 'News':'teal', 'Neutral':'teal', 'Anti':'teal'})
-	 #    g.set_title(title, fontsize = 20)
-	    
-	 #    # add annotations one by one with a loop
-	 #    for line in range(0,data.shape[0]):
-	 #        g.text(data[x][line], data[y][line], data['target'][line], 
-	 #                horizontalalignment='left', size='large', color='black')
-	 #    st.pyplot()
-
-
-		eda.plotScatter(x = 'compound', y = 'polarity', df = av_data, title = 'Compound Vs Polarity\n')
-		st.pyplot()			
-
-# 			st.markdown("""
-# """)
-
-			
-
+			# plotting scatter-plot
+			eda.plotScatter(x = 'compound', y = 'polarity', df = av_data, title = 'Compound Vs Polarity\n')
+			st.pyplot()
 
 # TASKS:
 # 1. Build out the Word  Frequencies Page
