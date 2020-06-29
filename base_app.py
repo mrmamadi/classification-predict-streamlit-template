@@ -127,7 +127,7 @@ def build_corpus(df):
 def main():
     """Tweet Classifier App with Streamlit """
     # Creates side bare header image
-    
+
     # Creating sidebar with selection box -
     # you can create multiple pages this way
     # Reorder the list to change the page order
@@ -142,9 +142,9 @@ def main():
         ### Building "Information" sub pages
         info_options = ["General Information", "Problem Landscape", "Contributors"]
         info_selection = st.selectbox("",info_options)
-            
+
         if info_selection == "General Information":
-            st.image(r"resources\imgs\base_app\info-banner1.jpg", use_column_width = True)
+            st.image(r"resources/imgs/base_app/info-banner1.jpg", use_column_width = True)
             st.title("Tweet Classifer")
             st.subheader("Climate change belief classification")
             # You can read a markdown file from supporting resources folder
@@ -154,53 +154,53 @@ def main():
                 st.write(raw[['sentiment', 'message']])
 
         if info_selection == "Problem Landscape":
-            st.image(r"resources\imgs\base_app\info-banner1.jpg", use_column_width = True)
-            ps = open(r"resources\markdown\problem_statement.md").read()
+            st.image(r"resources/imgs/base_app/info-banner1.jpg", use_column_width = True)
+            ps = open(r"resources/markdown/problem_statement.md").read()
             st.markdown(info[2300:])
-        
+
         if info_selection == "Contributors":
 # CREDITS
             # Team Name
             st.markdown(f"""### **The Blobs** - *classification-jhb-en2*
             """)
-            
+
 
             # Team members
 # Titus
             st.markdown(
 f"""#### <a href="https://github.com/titusndondo">Titus Ndondo</a>
             """,unsafe_allow_html=True)
-            st.image(r"resources\imgs\base_app\contributor3.jpg", width=128)
+            st.image(r"resources/imgs/base_app/contributor3.jpg", width=128)
 # Rirhandzu
             st.markdown(
 f"""#### <a href="https://github.com/Rirhandzu95">Rirhandzu Mahlaule</a>
             """,unsafe_allow_html=True)
-            st.image(r"resources\imgs\base_app\contributor4.jpg", width=128)
+            st.image(r"resources/imgs/base_app/contributor4.jpg", width=128)
 # Kgaogelo
             st.markdown(
 f"""#### <a href="https://github.com/mrmamadi">Kgaogelo Mamadi</a>
             """,unsafe_allow_html=True)
-            st.image(r"resources\imgs\base_app\theblobs.png", width=128)
+            st.image(r"resources/imgs/base_app/theblobs.png", width=128)
 # Stanley
             st.markdown(
 f"""#### <a href="https://github.com/Martwuene">Stanley Machuene Kobo</a>
             """,unsafe_allow_html=True)
-            st.image(r"resources\imgs\base_app\contributor6.jpeg", width=128)
+            st.image(r"resources/imgs/base_app/contributor6.jpeg", width=128)
 # Zanele
             st.markdown(
 f"""#### <a href="https://github.com/Zaneleg">Zanele Gwamanda</a>
             """,unsafe_allow_html=True)
-            st.image(r"resources\imgs\base_app\contributor7.jpeg", width=128)
+            st.image(r"resources/imgs/base_app/contributor7.jpeg", width=128)
 # Bulelani
             st.markdown(
 f"""#### <a href="https://github.com/BNkosi">Bulelani Nkosi</a>
             """,unsafe_allow_html=True)
-            st.image(r"resources\imgs\base_app\contributor2.jpg", width=128)
-            
+            st.image(r"resources/imgs/base_app/contributor2.jpg", width=128)
+
             st.markdown(
 f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Ebrahim Noormahomed</a> - Supervisor
             """,unsafe_allow_html=True)
-            st.image(r"resources\imgs\base_app\contributor1.jpg", width=128)
+            st.image(r"resources/imgs/base_app/contributor1.jpg", width=128)
 
 
 
@@ -569,33 +569,67 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
 
     # Building out the "Prediction" page
     if selection == "Prediction":
+
+        ins_data = interactive.copy()
+
+        ins_data = feat_engine(ins_data)
+
+        ins_data, vocab, word_frequency_dict, class_words, pro_spec_words, neutral_spec_words, anti_spec_words, news_spec_words, label_specific_words,class_specific_words, ordered_words = build_corpus(ins_data)
+
+        top_n_words = eda.topNWords(ordered_words, n=5000)
+
+        very_common_words = eda.topNWords(ordered_words, n = 20)
+
+
         st.info("Prediction with ML Models")
-        
+
         # Creating a selection box to choose different models
-        models = ['Support Vector Classifier','Logistic Regression']
+        models = ['Support Vector','Logistic Regression', 'Nearest Neighbours',
+         'AdaBoost', 'Naive Bayes', 'Decision Tree']
         classifiers = st.selectbox("Choose a classifier", models)
-        
+
         # Creating a text box for user input
         tweet_text = st.text_area("Enter Text","Type Here")
 
         if st.button("Classify"):
 
-            if classifiers == 'Support Vector Classifier':
-                # Transforming user input with vectorizer
-                vect_text = [tweet_text]#.toarray()
-                # Load your .pkl file with the model of your choice + make predictions
-                # Try loading in multiple models to give the user a choice
-                predictor = joblib.load(open(os.path.join("resources/linear_svc.pkl"),"rb"))
-                prediction = predictor.predict(vect_text)
-                
+            tweet = prep.removePunctuation(tweet_text)
+            tweet = prep.tweetTokenizer(tweet)
+            tweet = prep.removeStopWords(tweet)
+            tweet = prep.lemmatizeTweet(tweet)
+            tweet = prep.removeInfrequentWords(tweet,
+            top_n_words = top_n_words + class_specific_words)
+            tweet = prep.removeCommonWords(tweet,
+            bag=very_common_words)
+            tweet = [' '.join(tweet)]
+
+            if classifiers == 'Support Vector':
+                predictor = joblib.load(open(os.path.join("resources/support_vector.pkl"),"rb"))
+                prediction = predictor.predict(tweet)
+
             elif classifiers == 'Logistic Regression':
-                # Transforming user input with vectorizer
-                vect_text = tweet_cv.transform([tweet_text]).toarray()
-                # Load your .pkl file with the model of your choice + make predictions
-                # Try loading in multiple models to give the user a choice
-                predictor = joblib.load(open(os.path.join("resources/Logistic_regression.pkl"),"rb"))
-                prediction = predictor.predict(vect_text)
-            
+                predictor = joblib.load(open(os.path.join("resources/logistic_regression.pkl"),"rb"))
+                prediction = predictor.predict(tweet)
+
+            elif classifiers == 'Nearest Neighbours':
+                predictor = joblib.load(open(os.path.join("resources/nearest_neighbors.pkl"),"rb"))
+                prediction = predictor.predict(tweet)
+
+            elif classifiers == 'AdaBoost':
+                predictor = joblib.load(open(os.path.join("resources/adaboost.pkl"),"rb"))
+                prediction = predictor.predict(tweet)
+
+            elif classifiers == 'Naive Bayes':
+                predictor = joblib.load(open(os.path.join("resources/naive_bayes.pkl"),"rb"))
+                prediction = predictor.predict(tweet)
+
+            elif classifiers == 'Decision Tree':
+                predictor = joblib.load(open(os.path.join("resources/decision_tree.pkl"),"rb"))
+                prediction = predictor.predict(tweet)
+
+            # elif classifiers == 'Random Forest':
+            #     predictor = joblib.load(open(os.path.join("resources/random_forest.pkl"),"rb"))
+            #     prediction = predictor.predict(tweet)
             # When model has successfully run, will print prediction
             # You can use a dictionary or similar structure to make this output
             # more human interpretable.
@@ -607,7 +641,7 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
                 result = 'Pro'
             else:
                 result = 'News'
-            
+
             st.success("Text Categorized as: {}".format(result))
 
     ##########################################################################################
