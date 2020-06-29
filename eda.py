@@ -26,7 +26,7 @@ from nltk.tokenize import TweetTokenizer
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from nltk.stem.wordnet import WordNetLemmatizer
 from textblob import TextBlob
-
+nltk.download('wordnet')
 # Import datasets
 # train_data = pd.read_csv('/resources/datasets/train.csv')
 
@@ -251,7 +251,7 @@ def plotWordCloud(data, label, column):
         contour_width=3,
         contour_color='firebrick',
         font_path=None,
-        min_font_size=6,
+        min_font_size=4,
         margin=2,
         ranks_only=None,
         max_words=500,

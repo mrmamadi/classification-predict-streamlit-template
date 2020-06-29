@@ -5,7 +5,7 @@
     Author: JHB-EN2.
 
     Description: These helper functions are to be used to clean data for predictions
-    and EDA 
+    and EDA
 
 """
 import pandas as pd
@@ -222,7 +222,7 @@ def lemmatizeTweet(tweet):
         tweet (list): tokens to be lemmatized
     Returns
     -------
-        lemmatized_tweet (list): lemmatized list of tokens 
+        lemmatized_tweet (list): lemmatized list of tokens
     Examples
         >>> lemmatizeTweet(['read',
                             'latest',
@@ -254,7 +254,7 @@ def lemmatizeTweet(tweet):
     lmtzr = WordNetLemmatizer()
     for token in tweet:
         lemmatized_tweet.append(lmtzr.lemmatize(token))
-        
+
     return lemmatized_tweet
 def topNWords(bag, n = 10000):
     """
@@ -301,7 +301,7 @@ def removeInfrequentWords(tweet, top_n_words):
                             ('urlweb', 9656),
                             ('global', 3773)],
         >>> removeInfrequentWords(['rt', 'climate', 'change', 'equation', 'screenshots', 'urlweb'],2)
-            ['change', 'climate']    
+            ['change', 'climate']
 
     """
     filt_tweet = list()

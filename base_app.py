@@ -202,10 +202,6 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
             """,unsafe_allow_html=True)
             st.image(r"resources/imgs/base_app/contributor1.jpg", width=128)
 
-
-
-#====================================================================================================#
-
 ######################################################################################################
 ##################################----------------EDA-PAGE--------------##############################
 ######################################################################################################
@@ -245,10 +241,6 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
 ##################################------------INSIGHTS-PAGE-------------##############################
 ######################################################################################################
 
-    ##########################################################################################
-    ############################-----------BULELANI-ZANELE------------########################
-    ##########################################################################################
-
     # Building the insights page
     if selection == "Insights":
         # Import data
@@ -264,9 +256,12 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
         # Building out Instructions Page
         if ins_page == "Instructions":
             st.write(f"""
-1. `Filter` your wordcloud's vocabulary by `word frequency`. This step will make the smaller words more relevant
-2. `Filre
-
+1. `Filter` uncommon words from the dataset. This step will make the less frequent words more relevant
+2. `Filter` very common words from the dataset. This will reduce the noice from the larger words
+3. `Filter` less positive sentiments by increasing `Lower Positive threshhold`.
+4. `Increase or decrease` the Neutral sentiment interval by increasing or decreasing the `Neutral Lower Threshold`
+5. `Filter` less negative sentiments by decreasing the `Negative Upper Threshhold`
+6. `Handles` and `Hashtags` are static for the whole class
 """)
         
         # Building out the Overview page
@@ -277,7 +272,7 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
             # st.write(over_data['tweets'])
             
             # Step 1: Filter infrequent words
-            n_1 = st.sidebar.slider('Step 1: Filter infrequent words', min_value = 0, max_value = 13000, step = 1000, value=10000)
+            n_1 = st.sidebar.slider('Step 1: Filter infrequent words', min_value = 0, max_value = 13000, step = 1000, value=12000)
             top_n_words = eda.topNWords(ordered_words, n=n_1)
             to_include = top_n_words + class_specific_words
             over_data['tweets_clean'] = over_data['tweets'].map(lambda tweet: eda.removeInfrequentWords(tweet, include = to_include))
@@ -292,12 +287,15 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
             # Plotting the general wordcloud
             eda.plotWordCloud(data=over_data, label = "Overview\n", column = 'tweets_clean')
             st.pyplot()
+            st.markdown("These are the words most commonly used in tweets in the dataset. It is unsurprising that the words present appear to show the sentiments of the `Pro` class. This is because the `Pro class makes up Over 50% of the dataset. It is clear that the majority of the sample demands science based action to be taken  in fighting climate change.")
 
             # Plotting the general positive sentiments
             n_3 = st.slider("Positive Threshhold", min_value = 0.0, max_value=0.95, step =0.05, value = 0.75)
             data_pos_gen = over_data[over_data['compound'] > n_3]
             eda.plotWordCloud(data=data_pos_gen, label = "Positive Sentiments\n", column = 'tweets_clean')
             st.pyplot()
+            st.markdown("Positive Sentiments is a subset of the data that has a `compound sentiment` score that is greater than `zero`. `Compound sentiment` is a value that ranges from `-1` to `1`, where values that are less than `0` express a negative sentiment or felling towards the subject matter.")
+            st.markdown("This word cloud confirms that the people who feel positive about the future once again favour a science based approach to combatting climate change like the `Paris Agreement`. It is noted that they make mention of the Great Barrier Reef, most likely to news reports of scientific findings that could aid in its recovery")
 
             # Plotting the general  neutral sentiments
             n_4 = st.slider("Neutral Lower Threshhold", min_value = -1.0, max_value=-0.05, step =0.05, value = -0.15)
@@ -536,9 +534,6 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
         
             st.write("""# BLANK""")
             #vocab = eda.getVocab(df = ins_data[ins_data'tweets'])
-    ##########################################################################################
-    ############################---------BULELANI-ZANELE-END----------########################
-    ##########################################################################################
 
 ######################################################################################################
 ##################################----------INSIGHTS-PAGE-END-----------##############################
@@ -549,23 +544,6 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
 ######################################################################################################
 ##################################------------PREDICTION-PAGE-----------##############################
 ######################################################################################################
-
-    ### DEADLINE: 27/06/2020 - Saturday
-    ### Delete an issue after committing please
-
-    ### ISSUES use: git commit -m "Description. Fixes issue x" : Where "x" is the issue number
-    ### 6. Add VECTORIZERS.PKL to resources\vectorizers folder
-    ### 7. Create a  selectbox to choose from vectorizers
-    ### 8. write an "if and else" function in order to make a prediction with the user selections
-    ### 9. Add vectorizers.md to the resources\markdown folder briefly explaining what a vectorizer does
-    ###    and the difference beterrn the two
-    ### 10. Add all model.pkl files to the resources\vectorizers folder
-    ### 11. Update selectbox with new nodels
-    ### 12. Write model.md files to explain each model briefly and perhaps mention the models f1-score
-
-    ##########################################################################################
-    ############################------------MELVA-MRMAMADI------------########################
-    ##########################################################################################
 
     # Building out the "Prediction" page
     if selection == "Prediction":
@@ -644,11 +622,6 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
 
             st.success("Text Categorized as: {}".format(result))
 
-    ##########################################################################################
-    ############################----------MELVA-MRMAMADI-END----------########################
-    ##########################################################################################
-    ### Zanele and Bulelani review and finalize
-    ### Delete instruction comments when done
 ######################################################################################################
 ##################################----------PREDICTION-PAGE-END---------##############################
 ######################################################################################################
