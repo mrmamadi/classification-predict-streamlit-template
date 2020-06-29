@@ -321,6 +321,7 @@ def violinPlots(data, target = 'target'):
         g.set_xlabel(' ')
     plt.show()
     return fig
+# function for generating scatter-plot
 def plotScatter(x, y, df, title):
     """
     display the scatter plot
@@ -329,23 +330,24 @@ def plotScatter(x, y, df, title):
     ----------
         x (str): variable string from dataframe
         y (str): variable string from dataframe
-        dict (dict): input of word list
+        df (DataFrame): input of dataframe
         
     Returns
     -------
         g (plot): display a scatter plot with points of each labelled sentiments
     
     """
-    plt.figure(figsize = (8, 5))
-    sns.scatterplot(df = df, x = x, y = y, hue = 'target', legend = False, palette = {'Pro':'#CCCC00', 'News':'teal', 'Neutral':'teal', 'Anti':'teal'})
-    plt.title(title, fontsize = 20)
+    fig = plt.figure(figsize = (8, 5))
+    g = sns.scatterplot(data = df, x = x, y = y, hue = 'target', legend = False, palette = {'Pro':'#CCCC00', 'News':'teal', 'Neutral':'teal', 'Anti':'teal'})
+    g.set_title(title, fontsize = 20)
     
     # add annotations one by one with a loop
     for line in range(0,df.shape[0]):
-        plt.text(df[x][line], df[y][line], df['target'][line], 
+        g.text(df[x][line], df[y][line], df['target'][line], 
                 horizontalalignment='left', size='large', color='black')
     
-    plt.show()
+    return g
+    
 def plotAltScatter(df, X = 'compound', y_ = 'polarity', title_ = 'Compound Vs Polarity\n'):
     data = df.groupby('target')[['negative', 'positive', 'neutral', 'compound', 'polarity', 'subjectivity']].mean().reset_index()
     plotScatter(x = X, y = y_, df = data, title = title_)
