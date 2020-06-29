@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='en2_edsa_climate',
-    version='0.23',
+    version='1.0',
     packages=find_packages(exclude=['tests*']),
     license='MIT',
     description='EDSA classification predict',
