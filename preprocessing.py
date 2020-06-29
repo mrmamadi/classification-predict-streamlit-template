@@ -5,11 +5,7 @@
     Author: JHB-EN2.
 
     Description: These helper functions are to be used to clean data for predictions
-<<<<<<< HEAD
     and EDA
-=======
-    and EDA
->>>>>>> 8f2e5bd563a292ca5be163f0d7576aced6947596
 
 """
 import pandas as pd
@@ -214,8 +210,8 @@ def removeStopWords(tokenized_tweet):
     # iterating through all words in a list
     for token in tokenized_tweet:
         # checking if current word is not a stopword # also checking if the current word is a hash_tag # also checking if the current word has more than one character
-        if token not in stopwords.words('english') + ['amp','rt'] and token.startswith('#') == False and len(token) > 1:
-            clean_tweet.append(token)
+        if token not in stopwords.words('english') + ['urlweb', 'husband', 'amp','rt'] and token.startswith('#') == False and len(token) > 1:
+            clean_tweet.append(token)            
     # return the cleaner tweet
     return clean_tweet
 def lemmatizeTweet(tweet):

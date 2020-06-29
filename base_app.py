@@ -1,7 +1,7 @@
 """
 
     Simple Streamlit webserver application for serving developed classification
-    models.
+	models.
 
     Author: Explore Data Science Academy.
 
@@ -13,12 +13,12 @@
     ---------------------------------------------------------------------
 
     Description: This file is used to launch a minimal streamlit web
-    application. You are expected to extend the functionality of this script
-    as part of your predict project.
+	application. You are expected to extend the functionality of this script
+	as part of your predict project.
 
-    For further help with the Streamlit framework, see:
+	For further help with the Streamlit framework, see:
 
-    https://docs.streamlit.io/en/latest/
+	https://docs.streamlit.io/en/latest/
 
 """
 ######################################################################################################
@@ -69,242 +69,209 @@ from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from textblob import TextBlob
 
 # Vectorizer - ADD A SECOND VECTORIZER (MELVA/KGAOGELO)
-#news_vectorizer = open("resources/tfidfvect.pkl","rb")
-#tweet_cv = joblib.load(news_vectorizer) # loading your vectorizer from the pkl file
+news_vectorizer = open(r"resources/tfidfvect.pkl","rb")
+tweet_cv = joblib.load(news_vectorizer) # loading your vectorizer from the pkl file
 
 # Load data
 raw = pd.read_csv("resources/datasets/train.csv")
 
-######################################################################################################
+#####################################################git 
+# #################################################
 ##################################----------EVERYONE-END------------##################################
 ######################################################################################################
 
 ### Data Preparation
 @st.cache(allow_output_mutation=True)
 def prepareData(df):
-    """
-    function to apply data cleaning steps
-    Parameters
-    ----------
-        df (DataFrame): DataFrame to be cleaned
-    Returns
-    -------
-        prep_df (DataFrame): cleaned DataFrame
-    """
-    prep_df = df.copy()
-    target_map = {-1:'Anti', 0:'Neutral', 1:'Pro', 2:'News'}
-    prep_df['target'] = prep_df['sentiment'].map(target_map)
-    prep_df = prep.typeConvert(prep_df)
-    prep_df['urls'] = prep_df['message'].map(prep.findURLs)
-    prep_df = prep.strip_url(prep_df)
-    prep_df['handles'] = prep_df['message'].map(prep.findHandles)
-    prep_df['hash_tags'] = prep_df['message'].map(prep.findHashTags)
-    prep_df['tweets'] = prep_df['message'].map(prep.removePunctuation)
+	"""
+	function to apply data cleaning steps
+	Parameters
+	----------
+		df (DataFrame): DataFrame to be cleaned
+	Returns
+	-------
+		prep_df (DataFrame): cleaned DataFrame
+	"""
+	prep_df = df.copy()
+	target_map = {-1:'Anti', 0:'Neutral', 1:'Pro', 2:'News'}
+	prep_df['target'] = prep_df['sentiment'].map(target_map)
+	prep_df = prep.typeConvert(prep_df)
+	prep_df['urls'] = prep_df['message'].map(prep.findURLs)
+	prep_df = prep.strip_url(prep_df)
+	prep_df['handles'] = prep_df['message'].map(prep.findHandles)
+	prep_df['hash_tags'] = prep_df['message'].map(prep.findHashTags)
+	prep_df['tweets'] = prep_df['message'].map(prep.removePunctuation)
 
-    return prep_df
+	return prep_df
 
 interactive = prepareData(raw)
 
 # Feature Engineering
-@st.cache
+@st.cache(allow_output_mutation=True)
 def feat_engine(df):
-    feat = df.copy()
-    feat['tweets'] = feat['tweets'].map(prep.tweetTokenizer)
-    feat['tweets'] = feat['tweets'].map(prep.removeStopWords)
-    feat['tweets'] = feat['tweets'].map(prep.lemmatizeTweet)
-    return feat
+	feat = df.copy()
+	feat['tweets'] = feat['tweets'].map(prep.tweetTokenizer)
+	feat['tweets'] = feat['tweets'].map(prep.removeStopWords)
+	feat['tweets'] = feat['tweets'].map(prep.lemmatizeTweet)
+	return feat
 @st.cache(allow_output_mutation=True)
 def build_corpus(df):
-    corp_df = df.copy()
-    vocab = eda.getVocab(corp_df['tweets'])
-    word_frequency_dict = eda.wordFrequencyDict(df,'target',vocab)
-    class_words = eda.getClassWords(word_frequency_dict)
-    pro_spec_words, neutral_spec_words, anti_spec_words, news_spec_words, label_specific_words,class_specific_words, ordered_words = eda.getOrder(class_words,df)
-    df = eda.applyScores(df)
-    return df, vocab, word_frequency_dict, class_words, pro_spec_words, neutral_spec_words, anti_spec_words, news_spec_words, label_specific_words,class_specific_words, ordered_words
+	corp_df = df.copy()
+	vocab = eda.getVocab(corp_df['tweets'])
+	word_frequency_dict = eda.wordFrequencyDict(df,'target',vocab)
+	class_words = eda.getClassWords(word_frequency_dict)
+	pro_spec_words, neutral_spec_words, anti_spec_words, news_spec_words, label_specific_words,class_specific_words, ordered_words = eda.getOrder(class_words,df)
+	df = eda.applyScores(df)
+	return df, vocab, word_frequency_dict, class_words, pro_spec_words, neutral_spec_words, anti_spec_words, news_spec_words, label_specific_words,class_specific_words, ordered_words
 
 # The main function where we will build the actual app
 def main():
-    """Tweet Classifier App with Streamlit """
-    # Creates side bare header image
+	"""Tweet Classifier App with Streamlit """
+	# Creates side bare header image
+	
+	# Creating sidebar with selection box -
+	# you can create multiple pages this way
+	# Reorder the list to change the page order
+	options = ["Information", "EDA", "Insights", "Prediction"] # These are the four main pages
+	selection = st.sidebar.selectbox("Choose Page", options)
 
-    # Creating sidebar with selection box -
-    # you can create multiple pages this way
-    # Reorder the list to change the page order
-    options = ["Information", "EDA", "Insights", "Prediction"] # These are the four main pages
-    selection = st.sidebar.selectbox("Choose Page", options)
+	### Building out the "Information" page
+	if selection == "Information":
+		info = open(r"resources/markdown/info.md").read()
+		width = 700
 
-    ### Building out the "Information" page
-    if selection == "Information":
-        info = open(r"resources/markdown/info.md").read()
-        width = 700
+		### Building "Information" sub pages
+		info_options = ["General Information", "Problem Landscape", "Contributors"]
+		info_selection = st.selectbox("",info_options)
+			
+		if info_selection == "General Information":
+			st.image(r"resources\imgs\base_app\info-banner1.jpg", use_column_width = True)
+			st.title("Tweet Classifer")
+			st.subheader("Climate change belief classification")
+			# You can read a markdown file from supporting resources folder
+			st.markdown(info[0:2290])
+			st.subheader("Raw Twitter data and label")
+			if st.checkbox('Show raw data'):
+				st.write(raw[['sentiment', 'message']])
 
-        ### Building "Information" sub pages
-        info_options = ["General Information", "Problem Landscape", "Contributors"]
-        info_selection = st.selectbox("",info_options)
-
-        if info_selection == "General Information":
-            st.image(r"resources/imgs/base_app/info-banner1.jpg", use_column_width = True)
-            st.title("Tweet Classifer")
-            st.subheader("Climate change belief classification")
-            # You can read a markdown file from supporting resources folder
-            st.markdown(info[0:2290])
-            st.subheader("Raw Twitter data and label")
-            if st.checkbox('Show raw data'):
-                st.write(raw[['sentiment', 'message']])
-
-        if info_selection == "Problem Landscape":
-            st.image(r"resources/imgs/base_app/info-banner1.jpg", use_column_width = True)
-            ps = open(r"resources/markdown/problem_statement.md").read()
-            st.markdown(info[2300:])
-
-        if info_selection == "Contributors":
+		if info_selection == "Problem Landscape":
+			st.image(r"resources\imgs\base_app\info-banner1.jpg", use_column_width = True)
+			ps = open(r"resources\markdown\problem_statement.md").read()
+			st.markdown(info[2300:])
+		
+		if info_selection == "Contributors":
 # CREDITS
-            # Team Name
-            st.markdown(f"""### **The Blobs** - *classification-jhb-en2*
-            """)
+			# Team Name
+			st.markdown(f"""### **The Blobs** - *classification-jhb-en2*
+			""")
+			
 
-
-            # Team members
+			# Team members
 # Titus
-            st.markdown(
+			st.markdown(
 f"""#### <a href="https://github.com/titusndondo">Titus Ndondo</a>
-            """,unsafe_allow_html=True)
-            st.image(r"resources/imgs/base_app/contributor3.jpg", width=128)
+			""",unsafe_allow_html=True)
+			st.image(r"resources\imgs\base_app\contributor3.jpg", width=128)
 # Rirhandzu
-            st.markdown(
+			st.markdown(
 f"""#### <a href="https://github.com/Rirhandzu95">Rirhandzu Mahlaule</a>
-            """,unsafe_allow_html=True)
-            st.image(r"resources/imgs/base_app/contributor4.jpg", width=128)
+			""",unsafe_allow_html=True)
+			st.image(r"resources\imgs\base_app\contributor4.jpg", width=128)
 # Kgaogelo
-            st.markdown(
+			st.markdown(
 f"""#### <a href="https://github.com/mrmamadi">Kgaogelo Mamadi</a>
-            """,unsafe_allow_html=True)
-            st.image(r"resources/imgs/base_app/theblobs.png", width=128)
+			""",unsafe_allow_html=True)
+			st.image(r"resources\imgs\base_app\theblobs.png", width=128)
 # Stanley
-            st.markdown(
+			st.markdown(
 f"""#### <a href="https://github.com/Martwuene">Stanley Machuene Kobo</a>
-            """,unsafe_allow_html=True)
-            st.image(r"resources/imgs/base_app/contributor6.jpeg", width=128)
+			""",unsafe_allow_html=True)
+			st.image(r"resources\imgs\base_app\contributor6.jpeg", width=128)
 # Zanele
-            st.markdown(
+			st.markdown(
 f"""#### <a href="https://github.com/Zaneleg">Zanele Gwamanda</a>
-            """,unsafe_allow_html=True)
-            st.image(r"resources/imgs/base_app/contributor7.jpeg", width=128)
+			""",unsafe_allow_html=True)
+			st.image(r"resources\imgs\base_app\contributor7.jpeg", width=128)
 # Bulelani
-            st.markdown(
+			st.markdown(
 f"""#### <a href="https://github.com/BNkosi">Bulelani Nkosi</a>
-            """,unsafe_allow_html=True)
-            st.image(r"resources/imgs/base_app/contributor2.jpg", width=128)
-
-            st.markdown(
+			""",unsafe_allow_html=True)
+			st.image(r"resources\imgs\base_app\contributor2.jpg", width=128)
+			
+			st.markdown(
 f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Ebrahim Noormahomed</a> - Supervisor
-            """,unsafe_allow_html=True)
-            st.image(r"resources/imgs/base_app/contributor1.jpg", width=128)
+			""",unsafe_allow_html=True)
+			st.image(r"resources\imgs\base_app\contributor1.jpg", width=128)
 
 ######################################################################################################
 ##################################------------PREDICTION-PAGE-----------##############################
 ######################################################################################################
 
-    ### DEADLINE: 27/06/2020 - Saturday
-    ### Delete an issue after committing please
+	### DEADLINE: 27/06/2020 - Saturday
+	### Delete an issue after committing please
 
-    ### ISSUES use: git commit -m "Description. Fixes issue x" : Where "x" is the issue number
-    ### 6. Add VECTORIZERS.PKL to resources\vectorizers folder
-    ### 7. Create a  selectbox to choose from vectorizers
-    ### 8. write an "if and else" function in order to make a prediction with the user selections
-    ### 9. Add vectorizers.md to the resources\markdown folder briefly explaining what a vectorizer does
-    ###    and the difference beterrn the two
-    ### 10. Add all model.pkl files to the resources\vectorizers folder
-    ### 11. Update selectbox with new nodels
-    ### 12. Write model.md files to explain each model briefly and perhaps mention the models f1-score
+	### ISSUES use: git commit -m "Description. Fixes issue x" : Where "x" is the issue number
+	### 6. Add VECTORIZERS.PKL to resources\vectorizers folder
+	### 7. Create a  selectbox to choose from vectorizers
+	### 8. write an "if and else" function in order to make a prediction with the user selections
+	### 9. Add vectorizers.md to the resources\markdown folder briefly explaining what a vectorizer does
+	###    and the difference beterrn the two
+	### 10. Add all model.pkl files to the resources\vectorizers folder
+	### 11. Update selectbox with new nodels
+	### 12. Write model.md files to explain each model briefly and perhaps mention the models f1-score
 
-    ##########################################################################################
-    ############################------------MELVA-MRMAMADI------------########################
-    ##########################################################################################
+	##########################################################################################
+	############################------------MELVA-MRMAMADI------------########################
+	##########################################################################################
 
-    # Building out the "Prediction" page
-    if selection == "Prediction":
+	# Building out the "Prediction" page
+	if selection == "Prediction":
+		st.info("Prediction with ML Models")
+		
+		# Creating a selection box to choose different models
+		models = ['Support Vector Classifier','Logistic Regression']
+		classifiers = st.selectbox("Choose a classifier", models)
+		
+		# Creating a text box for user input
+		tweet_text = st.text_area("Enter Text","Type Here")
 
-        ins_data = interactive.copy()
+		if st.button("Classify"):
 
-        ins_data = feat_engine(ins_data)
+			if classifiers == 'Support Vector Classifier':
+				# Transforming user input with vectorizer
+				vect_text = [tweet_text]#.toarray()
+				# Load your .pkl file with the model of your choice + make predictions
+				# Try loading in multiple models to give the user a choice
+				predictor = joblib.load(open(os.path.join("resources/linear_svc.pkl"),"rb"))
+				prediction = predictor.predict(vect_text)
+				
+			elif classifiers == 'Logistic Regression':
+				# Transforming user input with vectorizer
+				vect_text = tweet_cv.transform([tweet_text]).toarray()
+				# Load your .pkl file with the model of your choice + make predictions
+				# Try loading in multiple models to give the user a choice
+				predictor = joblib.load(open(os.path.join("resources/Logistic_regression.pkl"),"rb"))
+				prediction = predictor.predict(vect_text)
+			
+			# When model has successfully run, will print prediction
+			# You can use a dictionary or similar structure to make this output
+			# more human interpretable.
+			if prediction == -1:
+				result = 'Anti'
+			elif prediction == 0:
+				result = 'Neutral'
+			elif prediction == 1:
+				result = 'Pro'
+			else:
+				result = 'News'
+			
+			st.success("Text Categorized as: {}".format(result))
 
-        ins_data, vocab, word_frequency_dict, class_words, pro_spec_words, neutral_spec_words, anti_spec_words, news_spec_words, label_specific_words,class_specific_words, ordered_words = build_corpus(ins_data)
-
-        top_n_words = eda.topNWords(ordered_words, n=5000)
-
-        very_common_words = eda.topNWords(ordered_words, n = 20)
-
-
-        st.info("Prediction with ML Models")
-
-        # Creating a selection box to choose different models
-        models = ['Support Vector','Logistic Regression', 'Nearest Neighbours',
-         'AdaBoost', 'Naive Bayes', 'Decision Tree']
-        classifiers = st.selectbox("Choose a classifier", models)
-
-        # Creating a text box for user input
-        tweet_text = st.text_area("Enter Text","Type Here")
-
-        if st.button("Classify"):
-
-            tweet = prep.removePunctuation(tweet_text)
-            tweet = prep.tweetTokenizer(tweet)
-            tweet = prep.removeStopWords(tweet)
-            tweet = prep.lemmatizeTweet(tweet)
-            tweet = prep.removeInfrequentWords(tweet,
-            top_n_words = top_n_words + class_specific_words)
-            tweet = prep.removeCommonWords(tweet,
-            bag=very_common_words)
-            tweet = [' '.join(tweet)]
-
-            if classifiers == 'Support Vector':
-                predictor = joblib.load(open(os.path.join("resources/support_vector.pkl"),"rb"))
-                prediction = predictor.predict(tweet)
-
-            elif classifiers == 'Logistic Regression':
-                predictor = joblib.load(open(os.path.join("resources/logistic_regression.pkl"),"rb"))
-                prediction = predictor.predict(tweet)
-
-            elif classifiers == 'Nearest Neighbours':
-                predictor = joblib.load(open(os.path.join("resources/nearest_neighbors.pkl"),"rb"))
-                prediction = predictor.predict(tweet)
-
-            elif classifiers == 'AdaBoost':
-                predictor = joblib.load(open(os.path.join("resources/adaboost.pkl"),"rb"))
-                prediction = predictor.predict(tweet)
-
-            elif classifiers == 'Naive Bayes':
-                predictor = joblib.load(open(os.path.join("resources/naive_bayes.pkl"),"rb"))
-                prediction = predictor.predict(tweet)
-
-            elif classifiers == 'Decision Tree':
-                predictor = joblib.load(open(os.path.join("resources/decision_tree.pkl"),"rb"))
-                prediction = predictor.predict(tweet)
-
-            # elif classifiers == 'Random Forest':
-            #     predictor = joblib.load(open(os.path.join("resources/random_forest.pkl"),"rb"))
-            #     prediction = predictor.predict(tweet)
-            # When model has successfully run, will print prediction
-            # You can use a dictionary or similar structure to make this output
-            # more human interpretable.
-            if prediction == -1:
-                result = 'Anti'
-            elif prediction == 0:
-                result = 'Neutral'
-            elif prediction == 1:
-                result = 'Pro'
-            else:
-                result = 'News'
-
-            st.success("Text Categorized as: {}".format(result))
-
-    ##########################################################################################
-    ############################----------MELVA-MRMAMADI-END----------########################
-    ##########################################################################################
-    ### Zanele and Bulelani review and finalize
-    ### Delete instruction comments when done
+	##########################################################################################
+	############################----------MELVA-MRMAMADI-END----------########################
+	##########################################################################################
+	### Zanele and Bulelani review and finalize
+	### Delete instruction comments when done
 ######################################################################################################
 ##################################----------PREDICTION-PAGE-END---------##############################
 ######################################################################################################
@@ -316,30 +283,30 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
 ######################################################################################################
 
 
-    # Building out the "EDA" page
-    if selection == "EDA":
-        # Create a new Page
-        eda_sections = ["Word Frequencies", "Text Analysis", "Sentiment Analysis"]
-        eda_section = st.selectbox("", eda_sections) # if eda_section == "xxx":
-        st.write('add stuff here')
+	# Building out the "EDA" page
+	if selection == "EDA":
+		# Create a new Page
+		eda_sections = ["Word Frequencies", "Text Analysis", "Sentiment Analysis"]
+		eda_section = st.selectbox("", eda_sections) # if eda_section == "xxx":
+		st.write('add stuff here')
+		
+		# Data preperation (Do not build complex functions, consider only using functions on the page you need them)
 
-        # Data preperation (Do not build complex functions, consider only using functions on the page you need them)
-
-        # Building the Word Frequencies page
-        if eda_section == "Word Frequencies":
-            st.write("fill eda")
-        # Building the Text Analysis Page
-        if eda_section == "Text Analysis":
-            st.write("fill eda")
-        # Building the Sentiment Analysis Page
-        if eda_section == "Sentiment Analysis":
-            st.write("fill eda")
+		# Building the Word Frequencies page
+		if eda_section == "Word Frequencies":
+			st.write("fill eda")
+		# Building the Text Analysis Page
+		if eda_section == "Text Analysis":
+			st.write("fill eda")
+		# Building the Sentiment Analysis Page
+		if eda_section == "Sentiment Analysis":
+			st.write("fill eda")
 # TASKS:
 # 1. Build out the Word  Frequencies Page
 # 2. Visualize the top n words per sentiment
 # 3. Write some eda about it
 # 4. Build Text Analysis page
-# 5.
+# 5. 
 ######################################################################################################
 ##################################-------------EDA-PAGE-END-------------##############################
 ######################################################################################################
@@ -350,75 +317,307 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
 ##################################------------INSIGHTS-PAGE-------------##############################
 ######################################################################################################
 
-    ##########################################################################################
-    ############################-----------BULELANI-ZANELE------------########################
-    ##########################################################################################
+	##########################################################################################
+	############################-----------BULELANI-ZANELE------------########################
+	##########################################################################################
 
-    # Building the insights page
-    if selection == "Insights":
-        # Import data
-        ins_data = interactive.copy()
+	# Building the insights page
+	if selection == "Insights":
+		# Import data
+		ins_data = interactive.copy()
+		# Data 
+		ins_data = feat_engine(ins_data)
+			
+		ins_data, vocab, word_frequency_dict, class_words, pro_spec_words, neutral_spec_words, anti_spec_words, news_spec_words, label_specific_words,class_specific_words, ordered_words = build_corpus(ins_data)
+		
+		insights_pages = ["Instructions", "Overview", "Neutral", "News", "Anti", "Pro"]
+		ins_page = st.selectbox("",insights_pages)
+		
+		# Building out Instructions Page
+		if ins_page == "Instructions":
+			st.write(f"""
+1. `Filter` your wordcloud's vocabulary by `word frequency`. This step will make the smaller words more relevant
+2. `Filre
 
-        ins_data = feat_engine(ins_data)
-
-        ins_data, vocab, word_frequency_dict, class_words, pro_spec_words, neutral_spec_words, anti_spec_words, news_spec_words, label_specific_words,class_specific_words, ordered_words = build_corpus(ins_data)
-
-        insights_pages = ["Instructions", "Overview", "Neutral", "Pro", "Anti"]
-        ins_page = st.selectbox("",insights_pages)
-
-        # Building out Instructions Page
-        if ins_page == "Instructions":
-            st.write(f""" 1. `Filter` your wordcloud's vocabulary by `word frequency`
 """)
+		
+		# Building out the Overview page
+		if ins_page == "Overview":
+			st.write("""Full dataset""")
+			# Import Data
+			over_data = ins_data.copy()
+			# st.write(over_data['tweets'])
+			
+			# Step 1: Filter infrequent words
+			n_1 = st.sidebar.slider('Step 1: Filter infrequent words', min_value = 0, max_value = 13000, step = 1000, value=10000)
+			top_n_words = eda.topNWords(ordered_words, n=n_1)
+			to_include = top_n_words + class_specific_words
+			over_data['tweets_clean'] = over_data['tweets'].map(lambda tweet: eda.removeInfrequentWords(tweet, include = to_include))
+			# st.write(over_data['tweets_clean'])
 
-        # Building out the Overview page
-        if ins_page == "Overview":
-            st.write("""Wordcloud with full dataset""")
-            # Import Data
-            over_data = ins_data.copy()
-            # st.write(over_data['tweets'])
+			# Step 2: Filter very frequent words
+			n_2 = st.sidebar.slider('Step 2: Filter very common words', min_value = 0, max_value=40, step =2, value = 20)
+			very_common_words = eda.topNWords(ordered_words, n = n_2)
+			over_data['tweets_clean'] = over_data['tweets'].map(lambda tweet: eda.removeCommonWords(tweet, very_common_words))
+			# st.write(over_data['tweets_clean'])
+			
+			# Plotting the general wordcloud
+			eda.plotWordCloud(data=over_data, label = "Overview\n", column = 'tweets_clean')
+			st.pyplot()
 
-            # Step 1: Filter infrequent words
-            n_1 = st.sidebar.slider('Step 1: Filter infrequent words', min_value = 0, max_value = 13000, step = 1000, value=10000)
-            top_n_words = eda.topNWords(ordered_words, n=n_1)
-            to_include = top_n_words + class_specific_words
-            over_data['tweets_clean'] = over_data['tweets'].map(lambda tweet: eda.removeInfrequentWords(tweet, include = to_include))
-            # st.write(over_data['tweets_clean'])
+			# Plotting the general positive sentiments
+			n_3 = st.slider("Positive Threshhold", min_value = 0.0, max_value=0.95, step =0.05, value = 0.75)
+			data_pos_gen = over_data[over_data['compound'] > n_3]
+			eda.plotWordCloud(data=data_pos_gen, label = "Positive Sentiments\n", column = 'tweets_clean')
+			st.pyplot()
 
-            # Step 2: Filter very frequent words
-            n_2 = st.sidebar.slider('Step 2: Filter very common words', min_value = 0, max_value=40, step =2, value = 20)
-            very_common_words = eda.topNWords(ordered_words, n = n_2)
-            over_data['tweets_clean'] = over_data['tweets'].map(lambda tweet: eda.removeCommonWords(tweet, very_common_words))
-            # st.write(over_data['tweets_clean'])
+			# Plotting the general  neutral sentiments
+			n_4 = st.slider("Neutral Lower Threshhold", min_value = -1.0, max_value=-0.05, step =0.05, value = -0.15)
 
-            # Step 3
-            # display number of unique words
-            # all_vocab = eda.allVocab(over_data, 'tweets_clean')
-            # st.write("There are ",pd.Series(all_vocab).nunique(), " unique words")
+			data_neu_gen = over_data[(over_data['compound'] > n_4) & (over_data['compound'] < n_4*-2)]
+			eda.plotWordCloud(data=data_neu_gen, label = "Neutral Sentiments\n", column = 'tweets_clean')
+			st.pyplot()
 
-            # Plotting the general wordcloud
-            eda.plotWordCloud(data=over_data, label = "Overview")
-            st.pyplot()
 
-            # Plotting the general positive sentiments
 
-            data_pos_gen = over_data[over_data['compound'] > 0.25]
-            eda.plotWordCloud(data=data_pos_gen, label = "Overview")
-            st.pyplot()
+			# Plotting the general negative sentiments
+			n_5 = st.slider("Negative Upper Threshold", min_value = -0.95, max_value = 0.0, step = 0.05, value = -0.60)
+			data_neg_gen = over_data[over_data['compound'] < n_5]
+			eda.plotWordCloud(data=data_neg_gen, label = "Negative Sentiments\n", column = 'tweets_clean')
+			st.pyplot()
+			
+			# Who do they talk about
+			eda.plotWordCloud(data=over_data, label = "Handles\n", column = 'handles')
+			st.pyplot()
 
-        if ins_page == "Neutral":
-            st.write("""# BLANK""")
-            #vocab = eda.getVocab(df = ins_data[ins_data'tweets'])
-    ##########################################################################################
-    ############################---------BULELANI-ZANELE-END----------########################
-    ##########################################################################################
+			# What do they talk about?
+			eda.plotWordCloud(data=over_data, label = "Hashtags\n", column = 'hash_tags')
+			st.pyplot()
+
+		# Building out the neutral page
+		if ins_page == "Neutral":
+			st.write("""Neutral subset""")
+			# Import Data
+			neu_data = ins_data[ins_data['sentiment']==0].copy()
+			# st.write(neu_data['tweets'])
+			
+			# Step 1: Filter infrequent words
+			n_1 = st.sidebar.slider('Step 1: Filter infrequent words', min_value = 0, max_value = 13000, step = 1000, value=10000)
+			top_n_words = eda.topNWords(ordered_words, n=n_1)
+			to_include = top_n_words + class_specific_words
+			neu_data['tweets_clean'] = neu_data['tweets'].map(lambda tweet: eda.removeInfrequentWords(tweet, include = to_include))
+			# st.write(neu_data['tweets_clean'])
+
+			# Step 2: Filter very frequent words
+			n_2 = st.sidebar.slider('Step 2: Filter very common words', min_value = 0, max_value=40, step =2, value = 20)
+			very_common_words = eda.topNWords(ordered_words, n = n_2)
+			neu_data['tweets_clean'] = neu_data['tweets'].map(lambda tweet: eda.removeCommonWords(tweet, very_common_words))
+			# st.write(neu_data['tweets_clean'])
+			
+			# Plotting the general wordcloud
+			eda.plotWordCloud(data=neu_data, label = "Overview\n", column = 'tweets_clean')
+			st.pyplot()
+
+			# Plotting the general positive sentiments
+			n_3 = st.slider("Positive Threshhold", min_value = 0.0, max_value=0.95, step =0.05, value = 0.75)
+			data_pos_gen = neu_data[neu_data['compound'] > n_3]
+			eda.plotWordCloud(data=data_pos_gen, label = "Positive Sentiments\n", column = 'tweets_clean')
+			st.pyplot()
+
+			# Plotting the general Neutral sentiments
+			n_4 = st.slider("neu_data Lower Threshhold", min_value = -1.0, max_value=-0.05, step =0.05, value = -0.15)
+
+			data_neu_gen = neu_data[(neu_data['compound'] > n_4) & (neu_data['compound'] < n_4*-2)]
+			eda.plotWordCloud(data=data_neu_gen, label = "Neutral Sentiments\n", column = 'tweets_clean')
+			st.pyplot()
+
+
+
+			# Plotting the general negative sentiments
+			n_5 = st.slider("Negative Upper Threshold", min_value = -0.95, max_value = 0.0, step = 0.05, value = -0.60)
+			data_neg_gen = neu_data[neu_data['compound'] < n_5]
+			eda.plotWordCloud(data=data_neg_gen, label = "Negative Sentiments\n", column = 'tweets_clean')
+			st.pyplot()
+			
+			# Who do they talk about
+			eda.plotWordCloud(data=neu_data, label = "Handles\n", column = 'handles')
+			st.pyplot()
+
+			# What do they talk about?
+			eda.plotWordCloud(data=neu_data, label = "Hashtags\n", column = 'hash_tags')
+			st.pyplot()
+
+		# Building out the News 
+		if ins_page == "News":
+			st.write("""News subset""")
+			# Import Data
+			news_data = ins_data[ins_data['sentiment']==2].copy()
+			# st.write(news_data['tweets'])
+			
+			# Step 1: Filter infrequent words
+			n_1 = st.sidebar.slider('Step 1: Filter infrequent words', min_value = 0, max_value = 13000, step = 1000, value=10000)
+			top_n_words = eda.topNWords(ordered_words, n=n_1)
+			to_include = top_n_words + class_specific_words
+			news_data['tweets_clean'] = news_data['tweets'].map(lambda tweet: eda.removeInfrequentWords(tweet, include = to_include))
+			# st.write(news_data['tweets_clean'])
+
+			# Step 2: Filter very frequent words
+			n_2 = st.sidebar.slider('Step 2: Filter very common words', min_value = 0, max_value=40, step =2, value = 20)
+			very_common_words = eda.topNWords(ordered_words, n = n_2)
+			news_data['tweets_clean'] = news_data['tweets'].map(lambda tweet: eda.removeCommonWords(tweet, very_common_words))
+			# st.write(news_data['tweets_clean'])
+			
+			# Plotting the general wordcloud
+			eda.plotWordCloud(data=news_data, label = "Overview\n", column = 'tweets_clean')
+			st.pyplot()
+
+			# Plotting the general positive sentiments
+			n_3 = st.slider("Positive Threshhold", min_value = 0.0, max_value=0.95, step =0.05, value = 0.75)
+			data_pos_gen = news_data[news_data['compound'] > n_3]
+			eda.plotWordCloud(data=data_pos_gen, label = "Positive Sentiments\n", column = 'tweets_clean')
+			st.pyplot()
+
+			# Plotting the general Neutral sentiments
+			n_4 = st.slider("news_data Lower Threshhold", min_value = -1.0, max_value=-0.05, step =0.05, value = -0.15)
+
+			data_neu_gen = news_data[(news_data['compound'] > n_4) & (news_data['compound'] < n_4*-2)]
+			eda.plotWordCloud(data=data_neu_gen, label = "Neutral Sentiments\n", column = 'tweets_clean')
+			st.pyplot()
+
+
+
+			# Plotting the general negative sentiments
+			n_5 = st.slider("Negative Upper Threshold", min_value = -0.95, max_value = 0.0, step = 0.05, value = -0.60)
+			data_neg_gen = news_data[news_data['compound'] < n_5]
+			eda.plotWordCloud(data=data_neg_gen, label = "Negative Sentiments\n", column = 'tweets_clean')
+			st.pyplot()
+			
+			# Who do they talk about
+			eda.plotWordCloud(data=news_data, label = "Handles\n", column = 'handles')
+			st.pyplot()
+
+			# What do they talk about?
+			eda.plotWordCloud(data=news_data, label = "Hashtags\n", column = 'hash_tags')
+			st.pyplot()
+
+		# Building out the pro page
+		if ins_page == "Pro":
+			st.write("""Pro subset""")
+			# Import Data
+			pro_data = ins_data[ins_data['sentiment']==1].copy()
+			# st.write(pro_data['tweets'])
+			
+			# Step 1: Filter infrequent words
+			n_1 = st.sidebar.slider('Step 1: Filter infrequent words', min_value = 0, max_value = 13000, step = 1000, value=10000)
+			top_n_words = eda.topNWords(ordered_words, n=n_1)
+			to_include = top_n_words + class_specific_words
+			pro_data['tweets_clean'] = pro_data['tweets'].map(lambda tweet: eda.removeInfrequentWords(tweet, include = to_include))
+			# st.write(pro_data['tweets_clean'])
+
+			# Step 2: Filter very frequent words
+			n_2 = st.sidebar.slider('Step 2: Filter very common words', min_value = 0, max_value=40, step =2, value = 20)
+			very_common_words = eda.topNWords(ordered_words, n = n_2)
+			pro_data['tweets_clean'] = pro_data['tweets'].map(lambda tweet: eda.removeCommonWords(tweet, very_common_words))
+			# st.write(pro_data['tweets_clean'])
+			
+			# Plotting the general wordcloud
+			eda.plotWordCloud(data=pro_data, label = "Overview\n", column = 'tweets_clean')
+			st.pyplot()
+
+			# Plotting the general positive sentiments
+			n_3 = st.slider("Positive Threshhold", min_value = 0.0, max_value=0.95, step =0.05, value = 0.75)
+			data_pos_gen = pro_data[pro_data['compound'] > n_3]
+			eda.plotWordCloud(data=data_pos_gen, label = "Positive Sentiments\n", column = 'tweets_clean')
+			st.pyplot()
+
+			# Plotting the general Neutral sentiments
+			n_4 = st.slider("Neutral Lower Threshhold", min_value = -1.0, max_value=-0.05, step =0.05, value = -0.15)
+
+			data_neu_gen = pro_data[(pro_data['compound'] > n_4) & (pro_data['compound'] < n_4*-2)]
+			eda.plotWordCloud(data=data_neu_gen, label = "Neutral Sentiments\n", column = 'tweets_clean')
+			st.pyplot()
+
+
+
+			# Plotting the general negative sentiments
+			n_5 = st.slider("Negative Upper Threshold", min_value = -0.95, max_value = 0.0, step = 0.05, value = -0.60)
+			data_neg_gen = pro_data[pro_data['compound'] < n_5]
+			eda.plotWordCloud(data=data_neg_gen, label = "Negative Sentiments\n", column = 'tweets_clean')
+			st.pyplot()
+			
+			# Who do they talk about
+			eda.plotWordCloud(data=pro_data, label = "Handles\n", column = 'handles')
+			st.pyplot()
+
+			# What do they talk about?
+			eda.plotWordCloud(data=pro_data, label = "Hashtags\n", column = 'hash_tags')
+			st.pyplot()
+
+		# Building out the Anti 
+		if ins_page == "Anti":
+			st.write("""Neutral subset""")
+			# Import Data
+			anti_data = ins_data[ins_data['sentiment']==-1].copy()
+			# st.write(anti_data['tweets'])
+			
+			# Step 1: Filter infrequent words
+			n_1 = st.sidebar.slider('Step 1: Filter infrequent words', min_value = 0, max_value = 13000, step = 1000, value=10000)
+			top_n_words = eda.topNWords(ordered_words, n=n_1)
+			to_include = top_n_words + class_specific_words
+			anti_data['tweets_clean'] = anti_data['tweets'].map(lambda tweet: eda.removeInfrequentWords(tweet, include = to_include))
+			# st.write(anti_data['tweets_clean'])
+
+			# Step 2: Filter very frequent words
+			n_2 = st.sidebar.slider('Step 2: Filter very common words', min_value = 0, max_value=40, step =2, value = 20)
+			very_common_words = eda.topNWords(ordered_words, n = n_2)
+			anti_data['tweets_clean'] = anti_data['tweets'].map(lambda tweet: eda.removeCommonWords(tweet, very_common_words))
+			# st.write(anti_data['tweets_clean'])
+			
+			# Plotting the general wordcloud
+			eda.plotWordCloud(data=anti_data, label = "Overview\n", column = 'tweets_clean')
+			st.pyplot()
+
+			# Plotting the general positive sentiments
+			n_3 = st.slider("Positive Threshhold", min_value = 0.0, max_value=0.95, step =0.05, value = 0.75)
+			data_pos_gen = anti_data[anti_data['compound'] > n_3]
+			eda.plotWordCloud(data=data_pos_gen, label = "Positive Sentiments\n", column = 'tweets_clean')
+			st.pyplot()
+
+			# Plotting the general Neutral sentiments
+			n_4 = st.slider("anti_data Lower Threshhold", min_value = -1.0, max_value=-0.05, step =0.05, value = -0.15)
+
+			data_neu_gen = anti_data[(anti_data['compound'] > n_4) & (anti_data['compound'] < n_4*-2)]
+			eda.plotWordCloud(data=data_neu_gen, label = "Neutral Sentiments\n", column = 'tweets_clean')
+			st.pyplot()
+
+
+
+			# Plotting the general negative sentiments
+			n_5 = st.slider("Negative Upper Threshold", min_value = -0.95, max_value = 0.0, step = 0.05, value = -0.60)
+			data_neg_gen = anti_data[anti_data['compound'] < n_5]
+			eda.plotWordCloud(data=data_neg_gen, label = "Negative Sentiments\n", column = 'tweets_clean')
+			st.pyplot()
+			
+			# Who do they talk about
+			eda.plotWordCloud(data=anti_data, label = "Handles\n", column = 'handles')
+			st.pyplot()
+
+			# What do they talk about?
+			eda.plotWordCloud(data=anti_data, label = "Hashtags\n", column = 'hash_tags')
+			st.pyplot()
+		
+			st.write("""# BLANK""")
+			#vocab = eda.getVocab(df = ins_data[ins_data'tweets'])
+	##########################################################################################
+	############################---------BULELANI-ZANELE-END----------########################
+	##########################################################################################
 
 ######################################################################################################
 ##################################----------INSIGHTS-PAGE-END-----------##############################
 ######################################################################################################
-
-    st.sidebar.image(r"resources/imgs/base_app/theblobs.png", width=100)
-    st.sidebar.image(r"resources/imgs/EDSA_logo.png", width=225)
-# Required to let Streamlit instantiate our web app.
+	
+	st.sidebar.image(r"resources\imgs\base_app\theblobs.png", width=100)
+	st.sidebar.image(r"resources\imgs\EDSA_logo.png", width=225)
+# Required to let Streamlit instantiate our web app.  
 if __name__ == '__main__':
-    main()
+	main()
