@@ -131,7 +131,7 @@ def main():
     # Creating sidebar with selection box -
     # you can create multiple pages this way
     # Reorder the list to change the page order
-    options = ["Information", "EDA", "Insights", "Prediction"] # These are the four main pages
+    options = ["Information",  "Insights", "Prediction"] # These are the four main pages "EDA",
     selection = st.sidebar.selectbox("Choose Page", options)
 
     ### Building out the "Information" page
@@ -207,24 +207,24 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
 ######################################################################################################
 
 
-    # Building out the "EDA" page
-    if selection == "EDA":
-        # Create a new Page
-        eda_sections = ["Word Frequencies", "Text Analysis", "Sentiment Analysis"]
-        eda_section = st.selectbox("", eda_sections) # if eda_section == "xxx":
-        st.write('add stuff here')
+    # # Building out the "EDA" page
+    # if selection == "EDA":
+    #     # Create a new Page
+    #     eda_sections = ["Word Frequencies", "Text Analysis", "Sentiment Analysis"]
+    #     eda_section = st.selectbox("", eda_sections) # if eda_section == "xxx":
+    #     st.write('add stuff here')
 
-        # Data preperation (Do not build complex functions, consider only using functions on the page you need them)
+    #     # Data preperation (Do not build complex functions, consider only using functions on the page you need them)
 
-        # Building the Word Frequencies page
-        if eda_section == "Word Frequencies":
-            st.write("fill eda")
-        # Building the Text Analysis Page
-        if eda_section == "Text Analysis":
-            st.write("fill eda")
-        # Building the Sentiment Analysis Page
-        if eda_section == "Sentiment Analysis":
-            st.write("fill eda")
+    #     # Building the Word Frequencies page
+    #     if eda_section == "Word Frequencies":
+    #         st.write("fill eda")
+    #     # Building the Text Analysis Page
+    #     if eda_section == "Text Analysis":
+    #         st.write("fill eda")
+    #     # Building the Sentiment Analysis Page
+    #     if eda_section == "Sentiment Analysis":
+    #         st.write("fill eda")
 # TASKS:
 # 1. Build out the Word  Frequencies Page
 # 2. Visualize the top n words per sentiment
@@ -283,7 +283,7 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
             very_common_words = eda.topNWords(ordered_words, n = n_2)
             over_data['tweets_clean'] = over_data['tweets'].map(lambda tweet: eda.removeCommonWords(tweet, very_common_words))
             # st.write(over_data['tweets_clean'])
-            
+            st.markdown("### What do people talk about?")
             # Plotting the general wordcloud
             eda.plotWordCloud(data=over_data, label = "Overview\n", column = 'tweets_clean')
             st.pyplot()
@@ -303,22 +303,27 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
             data_neu_gen = over_data[(over_data['compound'] > n_4) & (over_data['compound'] < n_4*-2)]
             eda.plotWordCloud(data=data_neu_gen, label = "Neutral Sentiments\n", column = 'tweets_clean')
             st.pyplot()
-
-
+            st.markdown("Neutral sentiments is a subset representing tweets that no sentiment towards climate change either way. They are the most objective tweets")
+            st.markdown("This subset talks about taking action and the factors that affect climate change such as travel. They are facts based and more concerned with politics and scientific evidence linking climate change to human activity.")
 
             # Plotting the general negative sentiments
             n_5 = st.slider("Negative Upper Threshold", min_value = -0.95, max_value = 0.0, step = 0.05, value = -0.60)
             data_neg_gen = over_data[over_data['compound'] < n_5]
             eda.plotWordCloud(data=data_neg_gen, label = "Negative Sentiments\n", column = 'tweets_clean')
             st.pyplot()
+            st.markdown("The negative sentiments are a subset that expresses a strong negative view. It appears that tweets in this category express their outrage at climate change deniers. They consider Climate change to be a disaster that threatens our survival. It is interesting that this group speaks more of assigning blame. This explains refernces to China as they may be blaming China for being the worst emmiter of greenhouse gasses.")
             
+            st.markdown("### Who are the key influencers in the discussion on climate change?")
             # Who do they talk about
             eda.plotWordCloud(data=over_data, label = "Handles\n", column = 'handles')
             st.pyplot()
+            st.markdown("Here we examin the twitter handles mentioned in the tweets. Of note are the President Donald Trump and Senator Bernie Sanders. These public figures represent extremes in the debate with Trump being a notorious climate change denier while Bernie Sanders has expressed his support of the Green New Deal and is a favorite amongst the Pro climate change camp")
 
+            st.markdown("### What are the most influencial topics?")
             # What do they talk about?
             eda.plotWordCloud(data=over_data, label = "Hashtags\n", column = 'hash_tags')
             st.pyplot()
+            st.markdown("Hashtags represent summaries of the main topics in a tweet. They are an excellent way to summarize a conversation. It is immedeately clear that the main topics are political. People speak of voting and taking action. It is clear that the tweets express the wish to change the status quo.")
 
         # Building out the neutral page
         if ins_page == "Neutral":
@@ -328,7 +333,7 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
             # st.write(neu_data['tweets'])
             
             # Step 1: Filter infrequent words
-            n_1 = st.sidebar.slider('Step 1: Filter infrequent words', min_value = 0, max_value = 13000, step = 1000, value=10000)
+            n_1 = st.sidebar.slider('Step 1: Filter infrequent words', min_value = 0, max_value = 13000, step = 1000, value=12000)
             top_n_words = eda.topNWords(ordered_words, n=n_1)
             to_include = top_n_words + class_specific_words
             neu_data['tweets_clean'] = neu_data['tweets'].map(lambda tweet: eda.removeInfrequentWords(tweet, include = to_include))
@@ -532,7 +537,6 @@ f"""#### <a href="https://www.linkedin.com/in/ebrahim-noormahomed-b88404141/">Eb
             eda.plotWordCloud(data=anti_data, label = "Hashtags\n", column = 'hash_tags')
             st.pyplot()
         
-            st.write("""# BLANK""")
             #vocab = eda.getVocab(df = ins_data[ins_data'tweets'])
 
 ######################################################################################################
